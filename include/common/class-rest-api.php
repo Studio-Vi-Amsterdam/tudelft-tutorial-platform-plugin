@@ -10,6 +10,7 @@
 namespace TutorialPlatform\Common;
 
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
+use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use WP_REST_Request;
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
@@ -79,6 +80,7 @@ class Rest_Api {
     public function register_routes(): void {
         // Chapter routes
         Chapter_Rest_Api::register_routes();
+        Tutorial_Rest_Api::register_routes();
     }
 
     /**
@@ -179,6 +181,14 @@ class Rest_Api {
             'no_tutorials_found' => [
                 'status' => 404,
                 'message' => __( 'No tutorials found', 'tutorial-platform' ),
+            ],
+            'no_name' => [
+                'status' => 400,
+                'message' => __( 'No name provided', 'tutorial-platform' ),
+            ],
+            'no_content' => [
+                'status' => 400,
+                'message' => __( 'No content provided', 'tutorial-platform' ),
             ],
         ];
     }

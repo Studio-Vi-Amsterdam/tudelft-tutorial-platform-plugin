@@ -10,6 +10,8 @@
 namespace TutorialPlatform\Common;
 
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
+use TutorialPlatform\Modules\Keyword\Keyword_Rest_Api;
+use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use WP_REST_Request;
 
@@ -81,6 +83,8 @@ class Rest_Api {
         // Chapter routes
         Chapter_Rest_Api::register_routes();
         Tutorial_Rest_Api::register_routes();
+        Software_Rest_Api::register_routes();
+        Keyword_Rest_Api::register_routes();
     }
 
     /**
@@ -178,7 +182,15 @@ class Rest_Api {
                 'status' => 404,
                 'message' => __( 'No chapter found', 'tutorial-platform' ),
             ],
+            'invalid_chapter_id' => [
+                'status' => 400,
+                'message' => __( 'Invalid chapter ID', 'tutorial-platform' ),
+            ],
             'no_tutorials_found' => [
+                'status' => 404,
+                'message' => __( 'No tutorials found', 'tutorial-platform' ),
+            ],
+            'no_tutorial_found' => [
                 'status' => 404,
                 'message' => __( 'No tutorials found', 'tutorial-platform' ),
             ],
@@ -189,6 +201,22 @@ class Rest_Api {
             'no_content' => [
                 'status' => 400,
                 'message' => __( 'No content provided', 'tutorial-platform' ),
+            ],
+            'no_courses_found' => [
+                'status' => 404,
+                'message' => __( 'No courses found', 'tutorial-platform' ),
+            ],
+            'no_course_found' => [
+                'status' => 404,
+                'message' => __( 'No course found', 'tutorial-platform' ),
+            ],
+            'delete_failed' => [
+                'status' => 500,
+                'message' => __( 'Failed to delete', 'tutorial-platform' ),
+            ],
+            'id_or_name_required' => [
+                'status' => 400,
+                'message' => __( 'ID or name is required', 'tutorial-platform' ),
             ],
         ];
     }

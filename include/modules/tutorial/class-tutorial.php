@@ -6,6 +6,23 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 class Tutorial {
 
+    /**
+     * Custom fields mapping
+     * 
+     * Key is the custom field name in the database
+     * Value is the custom field name in the API response
+     */
+    const CUSTOM_FIELDS_MAPPING = [
+        "description" => "description",
+        "useful_links" => "useful_links",
+        "primary_software" => "primary_software",
+        "software_version" => "software_version",
+        "primary_subject" => "primary_subject",
+        "secondary_subject" => "secondary_subject",
+        "level" => "level",
+        "faculty" => "faculty",
+    ];
+
     public function __construct() {
         // Do nothing
     }

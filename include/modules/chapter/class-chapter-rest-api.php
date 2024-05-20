@@ -5,7 +5,6 @@ namespace TutorialPlatform\Modules\Chapter;
 defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Common\Rest_Api;
-use TutorialPlatform\Interface\Interface_Rest_Api;
 use WP_REST_Server;
 use WP_REST_Request;
 
@@ -35,10 +34,18 @@ class Chapter_Rest_Api {
                 return Rest_Api::is_user_allowed( $request );
             },
         ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/chapters/create', [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => [ self::class, 'create_chapter' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
     }
 
     /**
-     * Get chapters for given id
+     * Get chapters related to given id
      * 
      * @since 1.0.0
      * 
@@ -54,21 +61,13 @@ class Chapter_Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $chapters = get_field( 'chapters', $id );
+        $response = Chapter::get_chapters( $id );
 
-        if ( ! $chapters ) {
-            Rest_Api::send_error_response( 'no_chapters_found' );
+        if ( $response['error'] ) {
+            Rest_Api::send_error_response( $response['error'] );
         }
 
-        $chapters = array_map( function( $chapter ) {
-            return [
-                'id' => $chapter->ID,
-                'title' => get_the_title( $chapter->ID ),
-                'permalink' => get_permalink( $chapter->ID ),
-            ];
-        }, $chapters );
-
-        Rest_Api::send_success_response( $chapters );
+        Rest_Api::send_success_response( $response );
     }
 
     /**
@@ -88,6 +87,10 @@ class Chapter_Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
+        if ( get_post_type( $id ) !== 'chapter' ) {
+            Rest_Api::send_error_response( 'invalid_chapter_id' );
+        }
+
         $chapter = get_post( $id );
 
         if ( ! $chapter ) {
@@ -98,6 +101,7 @@ class Chapter_Rest_Api {
             'id' => $chapter->ID,
             'title' => get_the_title( $chapter->ID ),
             'content' => apply_filters( 'the_content', $chapter->post_content ),
+            'belongs_to' => get_field( 'belongs_to', $chapter->ID ),
         ];
 
         Rest_Api::send_success_response( $chapter );

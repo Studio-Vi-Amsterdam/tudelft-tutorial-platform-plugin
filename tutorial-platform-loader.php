@@ -117,12 +117,12 @@ if ( ! class_exists( 'TutorialPlatform' ) ) {
 			);
 
 			/**
-			 * Load Interfaces
+			 * Load abstract classes
 			 */
-			// $autoload->addNamespace( 
-			// 	'TutorialPlatform\Interface', 
-			// 	TUTORIAL_PLATFORM_PATH . '/include/interface'
-			// );
+			$autoload->addNamespace(
+				'TutorialPlatform\Abstracts',
+				TUTORIAL_PLATFORM_PATH . '/include/abstracts'
+			);
 		}
 
 		/**

@@ -8,6 +8,7 @@ use TutorialPlatform\Abstracts;
 use TutorialPlatform\Common\Rest_Api;
 use WP_REST_Server;
 use WP_REST_Request;
+
 class Tutorial_Rest_Api extends Abstracts\Rest_Api {
 
     /**

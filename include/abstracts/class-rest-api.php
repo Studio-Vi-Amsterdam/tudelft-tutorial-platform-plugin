@@ -83,7 +83,7 @@ class Rest_Api {
             ];
         }
 
-        if ( $module->post_author !== $current_user->ID ) {
+        if ( $module->post_author != $current_user->ID ) {
             return [
                 'error' => "no_permission",
             ];
@@ -230,7 +230,7 @@ class Rest_Api {
             ];
         }
 
-        if ( $module->post_author !== $current_user->ID ) {
+        if ( $module->post_author != $current_user->ID ) {
             return [
                 'error' => "no_permission",
             ];
@@ -284,7 +284,7 @@ class Rest_Api {
             ];
         }
 
-        if ( $module->post_author !== $current_user->ID ) {
+        if ( $module->post_author != $current_user->ID ) {
             return [
                 'error' => "no_permission",
             ];

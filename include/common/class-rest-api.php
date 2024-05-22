@@ -218,6 +218,10 @@ class Rest_Api {
                 'status' => 400,
                 'message' => __( 'ID or name is required', 'tutorial-platform' ),
             ],
+            'no_permission' => [
+                'status' => 403,
+                'message' => __( 'No permission for this action', 'tutorial-platform' ),
+            ],
         ];
     }
 

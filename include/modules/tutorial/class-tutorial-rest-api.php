@@ -100,7 +100,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $tutorial = parent::get_single_module( 'tutorial', $id, Tutorial::CUSTOM_FIELDS_MAPPING );
+        $tutorial = parent::get_single_module( 'tutorial', $id, Tutorial::CUSTOM_FIELDS_MAPPING, true, [ 'keywords', 'teachers' ] );
 
         if ( !empty( $tutorial['error'] ) ) {
             Rest_Api::send_error_response( $tutorial['error'] );

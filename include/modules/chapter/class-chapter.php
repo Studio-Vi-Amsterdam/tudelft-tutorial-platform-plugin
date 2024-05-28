@@ -148,4 +148,56 @@ class Chapter {
 
         return true;
     }
+
+    /**
+     * Update chapter
+     * 
+     * @param int $id
+     * @param array $data
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function update_chapter( int $id, array $data ): mixed {
+        
+        if ( ! $id ) {
+            return [
+                'error' => 'id_required'
+            ];
+        }
+
+        $chapter = get_post( $id );
+
+
+        if ( ! $chapter ) {
+            return [
+                'error' => 'no_chapter_found'
+            ];
+        }
+
+        $content = '';
+
+        if ( $data['content_blocks'] ) {
+            foreach ( $data['content_blocks'] as $block ) {
+                $content .= Gutenberg::generate_gutenberg_block( $block );
+            }
+        }
+
+        $result = wp_update_post( [
+            'ID' => $id,
+            'post_title' => $data['title'] ? $data['title'] : $chapter->post_title,
+            'post_content' => $content,
+        ] );
+
+        if ( is_wp_error( $result ) ) {
+            return [
+                'error' => 'update_failed'
+            ];
+        }
+
+        return true;
+    }
 }

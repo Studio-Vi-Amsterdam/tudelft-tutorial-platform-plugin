@@ -20,6 +20,7 @@ class Tutorial {
         "primary_subject" => "primary_subject",
         "secondary_subject" => "secondary_subject",
         "level" => "level",
+        "featured_image" => "featured_image",
         "faculty" => "faculty",
     ];
 

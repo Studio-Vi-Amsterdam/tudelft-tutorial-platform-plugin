@@ -10,7 +10,9 @@
 namespace TutorialPlatform\Common;
 
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
-use TutorialPlatform\Modules\Keyword\Keyword_Rest_Api;
+use TutorialPlatform\Modules\Course\Course;
+use TutorialPlatform\Modules\Course\Course_Rest_Api;
+use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use WP_REST_Request;
@@ -82,9 +84,10 @@ class Rest_Api {
     public function register_routes(): void {
         // Chapter routes
         Chapter_Rest_Api::register_routes();
+        Course_Rest_Api::register_routes();
         Tutorial_Rest_Api::register_routes();
         Software_Rest_Api::register_routes();
-        Keyword_Rest_Api::register_routes();
+        Taxonomy_Rest_Api::register_routes();
     }
 
     /**
@@ -221,6 +224,14 @@ class Rest_Api {
             'no_permission' => [
                 'status' => 403,
                 'message' => __( 'No permission for this action', 'tutorial-platform' ),
+            ],
+            'teacher_not_found' => [
+                'status' => 404,
+                'message' => __( 'Teacher not found', 'tutorial-platform' ),
+            ],
+            'teacher_empty' => [
+                'status' => 400,
+                'message' => __( 'Teacher is empty', 'tutorial-platform' ),
             ],
         ];
     }

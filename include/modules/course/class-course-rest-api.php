@@ -100,7 +100,7 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $course = parent::get_single_module( 'course', $id, Course::CUSTOM_FIELDS_MAPPING );
+        $course = parent::get_single_module( 'course', $id, Course::CUSTOM_FIELDS_MAPPING, true, [ 'keywords', 'teachers' ] );
 
         if ( !empty( $course['error'] ) ) {
             Rest_Api::send_error_response( $course['error'] );

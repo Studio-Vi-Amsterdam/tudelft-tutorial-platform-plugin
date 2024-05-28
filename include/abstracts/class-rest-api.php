@@ -47,6 +47,7 @@ class Rest_Api {
                 'id' => $module->ID,
                 'title' => $module->post_title,
                 'publish_date' => $module->post_date,
+                'featured_image' => get_field( 'featured_image', $module->ID)
             ];
         }, $modules );
 
@@ -65,7 +66,7 @@ class Rest_Api {
      * 
      * @return mixed
      */
-    public static function get_single_module( string $type, int $id, array $fields = [], bool $has_chapters = true, bool $has_keywords = true ): mixed {
+    public static function get_single_module( string $type, int $id, array $fields = [], bool $has_chapters = true, array $taxonomies = [] ): mixed {
         
         $current_user = wp_get_current_user();
         
@@ -84,9 +85,9 @@ class Rest_Api {
         }
 
         if ( $module->post_author != $current_user->ID ) {
-            return [
-                'error' => "no_permission",
-            ];
+            // return [
+            //     'error' => "no_permission",
+            // ];
         };
 
         $result_array = [
@@ -95,12 +96,15 @@ class Rest_Api {
             'content' => Gutenberg::parse_acf_gutenberg_block( $module->post_content ),
             'chapters' => $has_chapters ? Chapter::get_chapters( $module->ID ) : false,
             'publish_date' => $module->post_date,
-            'keywords' => $has_keywords ? get_terms( [
-                'taxonomy' => 'keywords',
+        ];
+
+        foreach ( $taxonomies as $taxonomy ) {
+            $result_array[ $taxonomy ] = get_terms([
+                'taxonomy' => $taxonomy,
                 'object_ids' => $module->ID,
                 'fields' => 'names',
-            ] ) : false,
-        ];
+            ]);
+        }
 
         foreach ( $fields as $acf_field => $api_field ) {
             $result_array[ $api_field ] = get_field( $acf_field, $module->ID );
@@ -159,6 +163,7 @@ class Rest_Api {
             ];
         }
 
+        // TODO: refactor this to a separate function
         if ( $data['keywords'] ) {
 
             $term_ids = [];
@@ -179,6 +184,48 @@ class Rest_Api {
             }
             wp_set_post_terms( $post_id, $term_ids, 'keywords', true );
         }
+
+        if ( $data['teachers'] ) {
+            $term_ids = [];
+
+            foreach( $data['teachers'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'teachers' ) ) {
+                    $term = wp_insert_term( $keyword, 'teachers' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'teachers' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'teachers', true );
+        }
+
+        if ( $data['software-version'] ) {
+            $term_ids = [];
+
+            foreach( $data['software-version'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'software-version' ) ) {
+                    $term = wp_insert_term( $keyword, 'software-version' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'software-version' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'software-version', true );
+        }
+
+        
 
         if ( !empty( $data['chapters'] ) ) {
             foreach ( $data['chapters'] as $chapter ) {
@@ -326,13 +373,7 @@ class Rest_Api {
 
         if ( !empty( $data['chapters'] ) ) {
             foreach ( $data['chapters'] as $chapter ) {
-                $chapter_id = Chapter::create_chapter( $chapter['title'], $chapter['content'], $id );
-
-                if ( $chapter_id ) {
-                    $existing_chapters = get_field( 'chapters', $id, [] );
-                    $existing_chapters[] = $chapter_id;
-                    update_field( 'chapters', $existing_chapters, $id );
-                }
+                Chapter::update_chapter( $chapter['id'], $chapter );
             }
         }
 
@@ -342,7 +383,5 @@ class Rest_Api {
                 update_field( $acf_field, $data[ $api_field ], $id );
             }
         }
-
     }
-    
 }

@@ -164,7 +164,7 @@ class Rest_Api {
         }
 
         // TODO: refactor this to a separate function
-        if ( $data['keywords'] ) {
+        if ( isset( $data['keywords'] ) ) {
 
             $term_ids = [];
 
@@ -331,11 +331,11 @@ class Rest_Api {
             ];
         }
 
-        if ( $module->post_author != $current_user->ID ) {
-            return [
-                'error' => "no_permission",
-            ];
-        };
+        // if ( $module->post_author != $current_user->ID ) {
+        //     return [
+        //         'error' => "no_permission",
+        //     ];
+        // };
 
         if ( !empty( $data['content'] ) ) {
             $content = '';
@@ -350,7 +350,7 @@ class Rest_Api {
             ] );
         }
 
-        if ( $data['keywords'] ) {
+        if ( isset( $data['keywords'] ) ) {
 
             $term_ids = [];
 
@@ -383,5 +383,7 @@ class Rest_Api {
                 update_field( $acf_field, $data[ $api_field ], $id );
             }
         }
+
+        return true;
     }
 }

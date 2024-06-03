@@ -127,9 +127,22 @@ class Gutenberg {
              * <!-- wp:acf/tu-delft-text {"name":"acf/tu-delft-text","data":{"show_chapter_subtitle":"0","_show_chapter_subtitle":"show_chapter_subtitle","tu-delft-text_content":"ewaeewaewaeaw wae awe awe awe awe","_tu-delft-text_content":"tu-delft-text_content"},"mode":"edit"} /-->
              */
             foreach ($block_data as $key => $value) {
-                if ( $key === 'show_chapter_subtitle' || $key === 'chapter_subtitle' ) {
-                    $data[$key] = $value;
-                    $data["_" . $key ] = $key;
+
+                /**
+                 * we are updating repeater row. Prefix is not only added to the start but also in between
+                 * For example:
+                 * tu-delft-content-card_content_card_row_0_tu-delft-content-card_card_title
+                 * tu-delft-quiz_answers_0_tu-delft-quiz_answer
+                 * 
+                 * TODO: refactor this
+                 */
+                if ( strpos($key, '_row_') ) {
+                    $key = str_replace('_content_card_row_', $block['block_name'] . '_content_card_row_', $key);
+                    $key = str_replace('card_title', $block['block_name'] . '_card_title', $key);
+                }
+                else if ( strpos($key, '_answers_') ) {
+                    $key = str_replace('_answers_', $block['block_name'] . '_answers_', $key);
+                    $key = str_replace('answer', $block['block_name'] . '_answer', $key);
                 }
                 else {
                     $data[$block['block_name'] . '_' . $key] = $value;
@@ -196,33 +209,53 @@ class Gutenberg {
         $final_data = [];
 
         foreach ($parsed_blocks as $block) {
-            if ( $block['blockName'] ) {
-                $block_name = str_replace('acf/', '', $block['blockName']);
-                $block_data = $block['attrs']['data'];
 
-                // remove _ prefix from keys
-                $block_data = array_filter($block_data, function($key) {
-                    return strpos($key, '_') !== 0;
-                }, ARRAY_FILTER_USE_KEY);
+            if ( !$block['blockName'] ) {
+                continue;
+            }
+
+            $block_name = str_replace('acf/', '', $block['blockName']);
+            $block_data = $block['attrs']['data'];
+
+
+            // remove _ prefix from keys
+            $block_data = array_filter($block_data, function($key) {
+                return strpos($key, '_') !== 0;
+            }, ARRAY_FILTER_USE_KEY);
+
+            /**
+             * remove block name from keys. For example tu-delft-text_content (key) => content (key)
+             * 
+             * For storing in database we need to differentiate between content and images but on frontend we just send "content", "image", etc
+             */
+            foreach ($block_data as $key => $value) {
+                
+                $new_key = str_replace($block_name . '_', '', $key);
+                $block_data[$new_key] = $value;
 
                 /**
-                 * remove block name from keys. For example tu-delft-text_content (key) => content (key)
-                 * 
-                 * For storing in database we need to differentiate between content and images but on frontend we just send "content", "image", etc
+                 * Note: Data is stored in database as ID but on frontend we need to show URL
                  */
-                foreach ($block_data as $key => $value) {
-                    $new_key = str_replace($block_name . '_', '', $key);
-                    $block_data[$new_key] = $value;
-                    if ( $key !== $new_key) {
-                        unset($block_data[$key]);
+                if ( is_int($value) ) {
+                    if ( in_array($new_key, ['image', 'video', 'file']) ) {
+                        $block_data[$new_key . '_url'] = wp_get_attachment_url($value);
+                    }
+                    else if (strpos($new_key, 'link') !== false) {
+                        $block_data[$new_key . '_url'] = get_permalink($value);
                     }
                 }
-                
-                $final_data[] = [
-                    'block_name' => $block_name,
-                    'block_data' => $block_data,
-                ];
+
+                // remove old key
+                if ( $key !== $new_key) {
+                    unset($block_data[$key]);
+                }
             }
+            
+            $final_data[] = [
+                'block_name' => $block_name,
+                'block_data' => $block_data,
+            ];
+            
         }
 
         return $final_data;

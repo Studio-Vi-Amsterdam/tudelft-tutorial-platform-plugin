@@ -12,6 +12,7 @@ namespace TutorialPlatform\Common;
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
 use TutorialPlatform\Modules\Course\Course;
 use TutorialPlatform\Modules\Course\Course_Rest_Api;
+use TutorialPlatform\Modules\Media\Media_Rest_Api;
 use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
@@ -88,6 +89,7 @@ class Rest_Api {
         Tutorial_Rest_Api::register_routes();
         Software_Rest_Api::register_routes();
         Taxonomy_Rest_Api::register_routes();
+        Media_Rest_Api::register_routes();
     }
 
     /**
@@ -232,6 +234,10 @@ class Rest_Api {
             'teacher_empty' => [
                 'status' => 400,
                 'message' => __( 'Teacher is empty', 'tutorial-platform' ),
+            ],
+            'media_upload_failed' => [
+                'status' => 400,
+                'message' => __( 'Media upload failed', 'tutorial-platform' ),
             ],
         ];
     }

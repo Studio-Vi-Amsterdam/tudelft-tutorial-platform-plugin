@@ -18,6 +18,8 @@ use TutorialPlatform\Modules\Chapter\Chapter;
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
+use TutorialPlatform\Modules\Media\Media;
+use TutorialPlatform\Modules\Media\Media_Rest_Api;
 
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
@@ -143,6 +145,8 @@ if ( ! class_exists( 'TutorialPlatform' ) ) {
 			new Chapter();
 			new Tutorial_Rest_Api();
 			new Tutorial();
+			new Media_Rest_Api();
+			new Media();
 		}
 
 

@@ -99,15 +99,7 @@ class Taxonomy_Rest_Api {
 
         $hide_empty = $request->get_param( 'hide_empty' ) ? $request->get_param( 'hide_empty' ) : false;
 
-        $args = [
-            'taxonomy' => 'keywords',
-            'hide_empty' => $hide_empty,
-            'orderby' => 'count',
-            'order' => 'DESC',
-
-        ];
-
-        $keywords = get_terms( $args );
+        $keywords = Taxonomy::get_keywords( $hide_empty );
 
         return $keywords;
     }
@@ -125,15 +117,7 @@ class Taxonomy_Rest_Api {
 
         $hide_empty = $request->get_param( 'hide_empty' ) ? $request->get_param( 'hide_empty' ) : false;
 
-        $args = [
-            'taxonomy' => 'teachers',
-            'hide_empty' => $hide_empty,
-            'orderby' => 'count',
-            'order' => 'DESC',
-
-        ];
-
-        $teachers = get_terms( $args );
+        $teachers = Taxonomy::get_teachers( $hide_empty );
 
         return $teachers;
     }
@@ -151,17 +135,9 @@ class Taxonomy_Rest_Api {
 
         $hide_empty = $request->get_param( 'hide_empty' ) ? $request->get_param( 'hide_empty' ) : false;
 
-        $args = [
-            'taxonomy' => 'software-version',
-            'hide_empty' => $hide_empty,
-            'orderby' => 'count',
-            'order' => 'DESC',
+        $software_version = Taxonomy::get_software_version( $hide_empty );
 
-        ];
-
-        $software_versions = get_terms( $args );
-
-        return $software_versions;
+        return $software_version;
     }
 
     /**

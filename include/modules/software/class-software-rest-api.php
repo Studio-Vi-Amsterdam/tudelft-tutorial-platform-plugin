@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Abstracts;
 use TutorialPlatform\Common\Rest_Api;
+use TutorialPlatform\Modules\Taxonomy\Taxonomy;
 use WP_REST_Server;
 use WP_REST_Request;
 
@@ -43,6 +44,14 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/create/draft', [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => [ self::class, 'create_draft_software' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/single/delete', [
             'methods' => WP_REST_Server::DELETABLE,
             'callback' => [ self::class, 'delete_software' ],
@@ -54,6 +63,14 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
         register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/single/update', [
             'methods' => WP_REST_Server::EDITABLE,
             'callback' => [ self::class, 'update_software' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/create/info', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_software_create_info' ],
             'permission_callback' => function( $request ) {
                 return Rest_Api::is_user_allowed( $request );
             },
@@ -142,6 +159,44 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
     }
 
     /**
+     * Create draft software
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function create_draft_software( WP_REST_Request $request ): mixed {
+        
+        $data = $request->get_json_params();
+
+        if ( ! $data['title'] && ! $data['id']) {
+            Rest_Api::send_error_response( 'no_name' );
+        }
+
+        $id = 0;
+
+        if ( $data['id'] ) {
+            $id = intval( $data['id'] );
+        }
+
+        $response = parent::create_or_update_draft_module(
+            'software',
+            $id,
+            $data['title'],
+            $data,
+            Software::CUSTOM_FIELDS_MAPPING
+        );
+
+        if ( !empty($response['error']) ) {
+            Rest_Api::send_error_response( $response['error'] );
+        }
+
+        Rest_Api::send_success_response( $response );
+    }
+
+    /**
      * Delete software
      * 
      * @since 1.0.0
@@ -193,5 +248,30 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return true;
+    }
+
+    /**
+     * Get software create info
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_software_create_info(): mixed {
+        
+        /**
+         *  Required data for creating software
+         * 
+         *  keywords,
+         *  software versions,
+         */ 
+
+        $keywords = Taxonomy::get_keywords( false, true );
+        $software_versions = Taxonomy::get_software_versions( false, true );
+
+        return [
+            'keywords' => $keywords,
+            'software_versions' => $software_versions,
+        ];
     }
 }

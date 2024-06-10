@@ -6,6 +6,9 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Abstracts;
 use TutorialPlatform\Common\Rest_Api;
+use TutorialPlatform\Modules\Software\Software;
+use TutorialPlatform\Modules\Subject\Subject;
+use TutorialPlatform\Modules\Taxonomy\Taxonomy;
 use WP_REST_Server;
 use WP_REST_Request;
 
@@ -35,6 +38,14 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/create/draft', [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => [ self::class, 'create_draft_tutorial' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/single', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_single_tutorial' ],
@@ -54,6 +65,14 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/single/update', [
             'methods' => WP_REST_Server::EDITABLE,
             'callback' => [ self::class, 'update_tutorial' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/create/info', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_tutorial_create_info' ],
             'permission_callback' => function( $request ) {
                 return Rest_Api::is_user_allowed( $request );
             },
@@ -142,6 +161,44 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
     }
 
     /**
+     * Create draft tutorial
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function create_draft_tutorial( WP_REST_Request $request ): mixed {
+        
+        $data = $request->get_json_params();
+
+        if ( ! $data['title'] && ! $data['id']) {
+            Rest_Api::send_error_response( 'no_name' );
+        }
+
+        $id = 0;
+
+        if ( $data['id'] ) {
+            $id = intval( $data['id'] );
+        }
+
+        $response = parent::create_or_update_draft_module(
+            'tutorial',
+            $id,
+            $data['title'],
+            $data,
+            Tutorial::CUSTOM_FIELDS_MAPPING
+        );
+
+        if ( !empty($response['error']) ) {
+            Rest_Api::send_error_response( $response['error'] );
+        }
+
+        Rest_Api::send_success_response( $response );
+    }
+
+    /**
      * Delete tutorial
      * 
      * @since 1.0.0
@@ -191,5 +248,41 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return true;
+    }
+
+    /**
+     * Get tutorial create info
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_tutorial_create_info(): mixed {
+        
+        /**
+         * Required data for creating tutorial
+         * Softwares,
+         * Software versions (for each software),
+         * Subjects,
+         * keywords,
+         * teachers
+         * Faculties
+         */
+
+        $softwares = Software::get_softwares();
+        $subjects = Subject::get_user_subjects();
+        $faculties = [
+            'BK'
+        ];
+        $keywords = Taxonomy::get_keywords(false, true);
+        $teachers = Taxonomy::get_teachers(false, true);
+
+        Rest_Api::send_success_response([
+            'softwares' => $softwares,
+            'subjects' => $subjects,
+            'faculties' => $faculties,
+            'keywords' => $keywords,
+            'teachers' => $teachers
+       ]);
     }
 }

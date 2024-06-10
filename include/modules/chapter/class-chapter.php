@@ -16,7 +16,7 @@ class Chapter {
      * Create chapter
      * 
      * @param string $title
-     * @param array $content_blocks
+     * @param array $content
      * @param int $parent_id
      * 
      * @since 1.0.0
@@ -25,15 +25,15 @@ class Chapter {
      * 
      * @return mixed
      */
-    public static function create_chapter(string $title, array $content_blocks, int $parent_id ): mixed { 
+    public static function create_chapter(string $title, array $content, int $parent_id ): mixed { 
         
         if ( ! $title ) {
             return false;
         }
 
-        $content = '';
+        $post_content = '';
 
-        if ( $content_blocks ) {
+        if ( $content ) {
             /**
              * Example data:
              * $data = [
@@ -49,14 +49,14 @@ class Chapter {
              * 
              * ]
              */
-            foreach ( $content_blocks as $block ) {
-                $content .= Gutenberg::generate_gutenberg_block( $block );
+            foreach ( $content as $block ) {
+                $post_content .= Gutenberg::generate_gutenberg_block( $block );
             }
         }
 
         $chapter_id = wp_insert_post( [
             'post_title' => $title,
-            'post_content' => $content,
+            'post_content' => $post_content,
             'post_type' => 'chapter',
             'post_status' => 'publish',
         ] );
@@ -180,8 +180,8 @@ class Chapter {
 
         $content = '';
 
-        if ( $data['content_blocks'] ) {
-            foreach ( $data['content_blocks'] as $block ) {
+        if ( $data['content'] ) {
+            foreach ( $data['content'] as $block ) {
                 $content .= Gutenberg::generate_gutenberg_block( $block );
             }
         }

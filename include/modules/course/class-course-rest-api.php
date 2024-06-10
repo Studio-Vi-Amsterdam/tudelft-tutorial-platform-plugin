@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Abstracts;
 use TutorialPlatform\Common\Rest_Api;
+use TutorialPlatform\Modules\Taxonomy\Taxonomy;
 use WP_REST_Server;
 use WP_REST_Request;
 
@@ -43,6 +44,14 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/courses/create/draft', [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => [ self::class, 'create_draft_course' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/courses/single/delete', [
             'methods' => WP_REST_Server::DELETABLE,
             'callback' => [ self::class, 'delete_course' ],
@@ -54,6 +63,14 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
         register_rest_route( Rest_Api::API_NAMESPACE, '/courses/single/update', [
             'methods' => WP_REST_Server::EDITABLE,
             'callback' => [ self::class, 'update_course' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/courses/create/info', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_course_create_info' ],
             'permission_callback' => function( $request ) {
                 return Rest_Api::is_user_allowed( $request );
             },
@@ -142,6 +159,44 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
     }
 
     /**
+     * Create draft course
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function create_draft_course( WP_REST_Request $request ): mixed {
+        
+        $data = $request->get_json_params();
+
+        if ( ! $data['title'] && ! $data['id']) {
+            Rest_Api::send_error_response( 'no_name' );
+        }
+
+        $id = 0;
+
+        if ( $data['id'] ) {
+            $id = intval( $data['id'] );
+        }
+
+        $response = parent::create_or_update_draft_module(
+            'course',
+            $id,
+            $data['title'],
+            $data,
+            Course::CUSTOM_FIELDS_MAPPING
+        );
+
+        if ( !empty($response['error']) ) {
+            Rest_Api::send_error_response( $response['error'] );
+        }
+
+        Rest_Api::send_success_response( $response );
+    }
+
+    /**
      * Delete course
      * 
      * @since 1.0.0
@@ -201,5 +256,38 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return true;
+    }
+
+    /**
+     * Get course create info
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_course_create_info(): mixed {
+        
+        /**
+         * Required data for creating course
+         * 
+         * Study,
+         * keywords,
+         * teachers,
+         * faculty,
+         */
+
+        $study = Course::STUDIES;
+        $keywords = Taxonomy::get_keywords( false, true );
+        $teachers = Taxonomy::get_teachers( false, true );
+        $faculty = [
+            'BK'
+        ];
+
+        return [
+            'study' => $study,
+            'keywords' => $keywords,
+            'teachers' => $teachers,
+            'faculty' => $faculty,
+        ];
     }
 }

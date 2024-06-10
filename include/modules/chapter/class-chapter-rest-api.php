@@ -165,7 +165,7 @@ class Chapter_Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        if ( ! $data['content_blocks'] ) {
+        if ( ! $data['content'] ) {
             Rest_Api::send_error_response( 'no_content' );
         }
 

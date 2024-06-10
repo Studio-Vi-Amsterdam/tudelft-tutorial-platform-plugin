@@ -250,6 +250,188 @@ class Rest_Api {
     }
 
     /**
+     * Create or (if ID is provided) update a draft module
+     * 
+     * @param string $type Module type
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function create_or_update_draft_module( string $type, int $post_id = 0, string $title, array $data = [], array $fields = [] ): int|array {
+        
+        $content = '';
+
+        if ( !empty( $data['content'] ) ) {
+            /**
+             * Example data:
+             *   $data = [
+             *      [
+             *          'block_name' => 'text_block',
+             *          'block_data' => [
+             *             'show_chapter_subtitle' => 1,
+             *             'chapter_subtitle' => Test123,
+             *             'content' => 'This is a text block',
+             *          ]
+             *      ],
+             *      ...
+             * 
+             * ]
+             */
+            foreach ( $data['content'] as $block ) {
+                $content .= Gutenberg::generate_gutenberg_block( $block );
+            }
+        }
+
+
+        if ( $post_id ) {
+            $module = get_post( $post_id );
+
+            if ( !$module ) {
+                return [
+                    'error' => "no_{$type}_found",
+                ];
+            }
+
+            if ( get_post_type( $post_id ) !== $type ) {
+                return [
+                    'error' => "no_{$type}_found",
+                ];
+            }
+
+            wp_update_post( [
+                'ID' => $post_id,
+                'post_title' => $title,
+                'post_content' => $content,
+            ] );
+        }
+        else {
+            // create a new draft
+            $post_data = [
+                'post_title' => $title,
+                'post_content' => $content,
+                'post_status' => 'draft',
+                'post_type' => $type,
+            ];
+
+            $post_id = wp_insert_post( $post_data );
+
+            if ( !$post_id ) {
+                return [
+                    'error' => "module_creation_failed",
+                ];
+            }
+
+            $module = get_post( $post_id );
+        }
+
+        // TODO: refactor this to a separate function
+        if ( isset( $data['keywords'] ) ) {
+
+            $term_ids = [];
+
+            foreach( $data['keywords'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'keywords' ) ) {
+                    $term = wp_insert_term( $keyword, 'keywords' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'keywords' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'keywords', true );
+        }
+
+        if ( isset( $data['teachers'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['teachers'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'teachers' ) ) {
+                    $term = wp_insert_term( $keyword, 'teachers' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'teachers' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'teachers', true );
+        }
+
+        if ( isset( $data['software-version'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['software-version'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'software-version' ) ) {
+                    $term = wp_insert_term( $keyword, 'software-version' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'software-version' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'software-version', true );
+        }
+
+        // in draft mode we reset the chapters
+        update_field( 'chapters', [], $post_id );
+
+        if ( !empty( $data['chapters'] ) ) {
+            foreach ( $data['chapters'] as $chapter ) {
+
+                if ( $chapter['id'] ) {
+                    $chapter_id = $chapter['id'];
+                    Chapter::update_chapter( $chapter_id, $chapter );
+                } 
+                else {
+                    $chapter_id = Chapter::create_chapter( $chapter['title'], $chapter['content'], $post_id );
+                }
+
+
+                if ( $chapter_id ) {
+                    $existing_chapters = get_field( 'chapters', $post_id, [] );
+                    $existing_chapters[] = $chapter_id;
+                    update_field( 'chapters', $existing_chapters, $post_id );
+                }
+            }
+        }
+
+        // Custom fields mapping
+        foreach ( $fields as $acf_field => $api_field ) {
+            if ( !empty( $data[ $api_field ] ) ) {
+                update_field( $acf_field, $data[ $api_field ], $post_id );
+            }
+        }
+
+        // get
+        $existing_chapters = array_map( function( $chapter_id ) {
+            return [
+                'id' => $chapter_id,
+                'title' => get_the_title( $chapter_id ),
+            ];
+        }, get_field( 'chapters', $post_id, [] ) ?? []);
+        
+        return [
+            'id' => $post_id,
+            'chapters' => $existing_chapters,
+        ];
+    }
+
+    /**
      * Delete module by id
      * 
      * @param string $type Module type

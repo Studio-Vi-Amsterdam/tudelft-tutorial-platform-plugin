@@ -28,6 +28,14 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/preview', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_software_preview' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/softwares/single', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_single_software' ],
@@ -98,6 +106,32 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return $softwares;
+    }
+
+    /**
+     * Get software preview
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function get_software_preview( WP_REST_Request $request ): mixed {
+        
+        $id = $request->get_param( 'id' );
+
+        if ( ! $id ) {
+            Rest_Api::send_error_response( 'id_required' );
+        }
+
+        $link = parent::get_module_preview_link( 'software', $id );
+
+        if ( ! $link ) {
+            Rest_Api::send_error_response( 'no_preview' );
+        }
+
+        return $link;
     }
 
     /**

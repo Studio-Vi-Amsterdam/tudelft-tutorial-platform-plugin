@@ -239,6 +239,10 @@ class Rest_Api {
                 'status' => 400,
                 'message' => __( 'Media upload failed', 'tutorial-platform' ),
             ],
+            'no_preview' => [
+                'status' => 404,
+                'message' => __( 'No preview found', 'tutorial-platform' ),
+            ],
         ];
     }
 

@@ -30,6 +30,14 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/preview', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_tutorial_preview' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/create', [
             'methods' => WP_REST_Server::CREATABLE,
             'callback' => [ self::class, 'create_tutorial' ],
@@ -100,6 +108,32 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return $tutorials;
+    }
+
+    /**
+     * Get tutorials preview from tutor
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_tutorial_preview( WP_REST_Request $request ): mixed {
+
+        $id = $request->get_param( 'id' );
+
+        if ( ! $id ) {
+            Rest_Api::send_error_response( 'id_required' );
+        }
+
+        $link = parent::get_module_preview_link( 'tutorial', $id );
+
+        if ( ! $link ) {
+            Rest_Api::send_error_response( 'no_preview' );
+        }
+
+        return $link;
     }
 
     /**

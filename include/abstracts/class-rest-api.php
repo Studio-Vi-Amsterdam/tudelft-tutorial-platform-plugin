@@ -114,6 +114,49 @@ class Rest_Api {
     }
 
     /**
+     * Get Preview link for module
+     * 
+     * @param string $type Module type
+     * @param int $id Module ID
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_module_preview_link( string $type, int $id ): mixed {
+        
+        $current_user = wp_get_current_user();
+
+        if ( get_post_type( $id ) !== $type ) {
+            return [
+                'error' => "no_{$type}_found",
+            ];
+        }
+
+        $module = get_post( $id );
+
+        if ( !$module ) {
+            return [
+                'error' => "no_{$type}_found",
+            ];
+        }
+
+        // if ( $module->post_author != $current_user->ID ) {
+        //     return [
+        //         'error' => "no_permission",
+        //     ];
+        // };
+
+        // get post status
+        $status = get_post_status( $id );
+
+        return [
+            'status' => $status,
+            'preview_link' => $status === 'publish' ? get_permalink( $id ) : get_preview_post_link( $id ),
+        ];
+    }
+
+    /**
      * Create module
      * 
      * @param string $type Module type

@@ -28,6 +28,14 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/courses/preview', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_courses_preview' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/courses/single', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_single_course' ],
@@ -98,6 +106,32 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
         }
 
         return $courses;
+    }
+
+    /**
+     * Get courses preview from tutor
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_courses_preview( WP_REST_Request $request ): mixed {
+
+        $id = $request->get_param( 'id' );
+
+        if ( ! $id ) {
+            Rest_Api::send_error_response( 'id_required' );
+        }
+
+        $link = parent::get_module_preview_link( 'course', $id );
+
+        if ( ! $link ) {
+            Rest_Api::send_error_response( 'no_preview' );
+        }
+
+        return $link;
     }
 
     /**

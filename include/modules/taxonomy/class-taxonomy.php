@@ -123,5 +123,48 @@ class Taxonomy {
 
         return $software_versions;
     }
+
+    /**
+     * Get all categories
+     * 
+     * @param bool $hide_empty Hide empty keywords default is false
+     * @param bool $minimal Minimal response default is false
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_categories( $hide_empty = false, $minimal = false ): mixed {
+
+        $args = [
+            'taxonomy' => 'category',
+            'hide_empty' => $hide_empty,
+            'orderby' => 'count',
+            'order' => 'DESC',
+        ];
+
+        $categories = get_terms( $args );
+
+        // filter out uncategorized
+        $categories = array_filter( $categories, function( $category ) {
+            return $category->term_id !== 1;
+        } );
+        // If minimal is true then return only id and title
+        if ( $minimal ) {
+
+            $response = [];
+
+            foreach ( $categories as $category ) {
+                $response[] = [
+                    'id' => $category->term_id,
+                    'title' => $category->name,
+                ];
+            }
+
+            return $response;
+        }
+
+        return $categories;
+    }
     
 }

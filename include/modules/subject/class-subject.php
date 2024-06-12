@@ -13,6 +13,9 @@ class Subject {
      * Value is the custom field name in the API response
      */
     const CUSTOM_FIELDS_MAPPING = [
+        "description" => "description",
+        "useful_links" => "useful_links",
+        "category" => "category",
     ];
     
     public function __construct() {

@@ -83,6 +83,30 @@ class Taxonomy_Rest_Api {
                 return Rest_Api::is_user_allowed( $request );
             },
         ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/categories', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_categories' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/categories/single', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_single_category' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/categories/create', [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => [ self::class, 'create_category' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
     }
 
 
@@ -135,9 +159,27 @@ class Taxonomy_Rest_Api {
 
         $hide_empty = $request->get_param( 'hide_empty' ) ? $request->get_param( 'hide_empty' ) : false;
 
-        $software_version = Taxonomy::get_software_version( $hide_empty );
+        $software_version = Taxonomy::get_software_versions( $hide_empty );
 
         return $software_version;
+    }
+
+    /**
+     * Get all categories
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function get_categories( WP_REST_Request $request ): mixed {
+
+        $hide_empty = $request->get_param( 'hide_empty' ) ? $request->get_param( 'hide_empty' ) : false;
+
+        $categories = Taxonomy::get_categories( $hide_empty );
+
+        return $categories;
     }
 
     /**
@@ -201,6 +243,29 @@ class Taxonomy_Rest_Api {
         }
 
         $term = wp_insert_term( $software_version, 'software-version' );
+
+        if ( is_wp_error( $term ) ) {
+            return $term;
+        }
+
+        return $term;
+    }
+
+    /**
+     * Create new category
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     */
+    public static function create_category( WP_REST_Request $request ): mixed {
+        $category = $request->get_param( 'category' );
+
+        if ( empty( $category ) ) {
+            return new \WP_Error( 'category_empty', 'Category is empty', [ 'status' => 400 ] );
+        }
+
+        $term = wp_insert_term( $category, 'category' );
 
         if ( is_wp_error( $term ) ) {
             return $term;
@@ -291,5 +356,33 @@ class Taxonomy_Rest_Api {
         }
 
         return $software_version;
+    }
+
+    /**
+     * Get single category
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     */
+    public static function get_single_category( WP_REST_Request $request ): mixed {
+        $id = $request->get_param( 'id' );
+        $name = $request->get_param( 'name' );
+
+        if ( ! $id && ! $name ) {
+            Rest_Api::send_error_response( 'id_or_name_required' );
+        }
+
+        if ( $id ) {
+            $category = get_term( $id, 'category' );
+        } else {
+            $category = get_term_by( 'name', $name, 'category' );
+        }
+
+        if ( is_wp_error( $category ) ) {
+            return $category;
+        }
+
+        return $category;
     }
 }

@@ -14,6 +14,7 @@ namespace TutorialPlatform;
 
 use TutorialPlatform\Common\Gutenberg;
 use TutorialPlatform\Common\Rest_Api;
+use TutorialPlatform\Common\Auth;
 use TutorialPlatform\Modules\Chapter\Chapter;
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial;
@@ -140,6 +141,7 @@ if ( ! class_exists( 'TutorialPlatform' ) ) {
 			// Init common classes
 			new Rest_Api();
 			new Gutenberg();
+			new Auth();
 
 			// Init modules
 			new Chapter_Rest_Api();

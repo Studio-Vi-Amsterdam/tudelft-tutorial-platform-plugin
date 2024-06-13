@@ -17,6 +17,7 @@ use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use TutorialPlatform\Modules\Subject\Subject_Rest_Api;
+use WP_Error;
 use WP_REST_Request;
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
@@ -84,7 +85,7 @@ class Rest_Api {
      * @return void
      */
     public function register_routes(): void {
-        // Chapter routes
+        Auth::register_routes();
         Chapter_Rest_Api::register_routes();
         Course_Rest_Api::register_routes();
         Tutorial_Rest_Api::register_routes();
@@ -101,19 +102,27 @@ class Rest_Api {
      * 
      * @since 1.0.0
      * 
-     * @return bool
+     * @return bool|WP_Error
      */
-    public static function is_user_allowed( WP_REST_Request $request ): bool {
+    public static function is_user_allowed( WP_REST_Request $request ): bool|WP_Error {
         $token = $request->get_header( 'Authorization' );
-
-        // Temporary allow all users
-        return true;
 
         if ( empty( $token ) ) {
             return false;
         }
 
-        return true;
+        switch ( Auth::validate_auth_token($token) ) {
+            case 'auth_success':
+                return true;
+            case 'auth_failed':
+                return new WP_Error( 'auth_failed', 'Authentication failed', ['status' => 401] );
+                break;
+            case 'expired_token':
+                return new WP_Error( 'expired_token', 'Token expired', ['status' => 401] );
+                break;
+        }
+
+        return false;
     }
 
     /**
@@ -217,6 +226,14 @@ class Rest_Api {
                 'status' => 404,
                 'message' => __( 'No course found', 'tutorial-platform' ),
             ],
+            'no_subjects_found' => [
+                'status' => 404,
+                'message' => __( 'No subjects found', 'tutorial-platform' ),
+            ],
+            'no_softwares_found' => [
+                'status' => 404,
+                'message' => __( 'No software found', 'tutorial-platform' ),
+            ],
             'delete_failed' => [
                 'status' => 500,
                 'message' => __( 'Failed to delete', 'tutorial-platform' ),
@@ -244,6 +261,10 @@ class Rest_Api {
             'no_preview' => [
                 'status' => 404,
                 'message' => __( 'No preview found', 'tutorial-platform' ),
+            ],
+            'auth_failed' => [
+                'status' => 401,
+                'message' => __( 'Authentication failed', 'tutorial-platform' ),
             ],
         ];
     }

@@ -166,5 +166,43 @@ class Taxonomy {
 
         return $categories;
     }
+
+    /**
+     * Get all academic levels
+     * 
+     * @param bool $hide_empty Hide empty keywords default is false
+     * @param bool $children_only Return only children default is false
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_academic_levels( $hide_empty = false, $children_only = false ): mixed {
+
+        $academic_levels = get_terms( [
+            'taxonomy' => 'academic-level',
+            'hide_empty' => $hide_empty,
+            'exclude' => '1',
+        ] );
+
+        // If children_only is true then return only children
+        if ( $children_only ) {
+
+            $response = [];
+
+            foreach ( $academic_levels as $academic_level ) {
+                if ( $academic_level->parent !== 0 ) {
+                    $response[] = [
+                        'id' => $academic_level->term_id,
+                        'title' => $academic_level->name,
+                    ];
+                }
+            }
+
+            return $response;
+        }
+
+        return $academic_levels;
+    }
     
 }

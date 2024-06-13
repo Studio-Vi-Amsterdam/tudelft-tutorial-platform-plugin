@@ -191,7 +191,9 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( $response['error'] );
         }
 
-        return true;
+        return [
+            'id' => $response
+        ];
     }
 
     /**

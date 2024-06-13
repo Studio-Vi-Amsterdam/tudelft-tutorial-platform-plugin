@@ -164,8 +164,12 @@ class Rest_Api {
      * @param string $status Module status
      * @param array $data Module data
      * 
+     * @since 1.0.0
+     * 
+     * @return int|array
+     * 
      */
-    public static function create_module( string $type, string $title, string $status, array $data = [], array $fields = [] ): bool|array {
+    public static function create_module( string $type, string $title, string $status, array $data = [], array $fields = [] ): int|array {
 
         
         $content = '';
@@ -289,7 +293,7 @@ class Rest_Api {
             }
         }
 
-        return true;
+        return $post_id;
     }
 
     /**

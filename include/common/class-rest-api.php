@@ -16,6 +16,7 @@ use TutorialPlatform\Modules\Media\Media_Rest_Api;
 use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
+use TutorialPlatform\Modules\Subject\Subject_Rest_Api;
 use WP_REST_Request;
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
@@ -89,6 +90,7 @@ class Rest_Api {
         Tutorial_Rest_Api::register_routes();
         Software_Rest_Api::register_routes();
         Taxonomy_Rest_Api::register_routes();
+        Subject_Rest_Api::register_routes();
         Media_Rest_Api::register_routes();
     }
 

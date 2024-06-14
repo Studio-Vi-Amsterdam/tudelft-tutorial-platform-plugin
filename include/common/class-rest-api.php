@@ -10,8 +10,8 @@
 namespace TutorialPlatform\Common;
 
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
-use TutorialPlatform\Modules\Course\Course;
 use TutorialPlatform\Modules\Course\Course_Rest_Api;
+use TutorialPlatform\Modules\Lab\Lab_Rest_Api;
 use TutorialPlatform\Modules\Media\Media_Rest_Api;
 use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
@@ -90,6 +90,7 @@ class Rest_Api {
         Course_Rest_Api::register_routes();
         Tutorial_Rest_Api::register_routes();
         Software_Rest_Api::register_routes();
+        Lab_Rest_Api::register_routes();
         Taxonomy_Rest_Api::register_routes();
         Subject_Rest_Api::register_routes();
         Media_Rest_Api::register_routes();

@@ -17,6 +17,8 @@ use TutorialPlatform\Common\Rest_Api;
 use TutorialPlatform\Common\Auth;
 use TutorialPlatform\Modules\Chapter\Chapter;
 use TutorialPlatform\Modules\Chapter\Chapter_Rest_Api;
+use TutorialPlatform\Modules\Lab\Lab;
+use TutorialPlatform\Modules\Lab\Lab_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use TutorialPlatform\Modules\Media\Media;
@@ -151,6 +153,8 @@ if ( ! class_exists( 'TutorialPlatform' ) ) {
 			new Subject_Rest_Api();
 			new Subject();
 			new Media_Rest_Api();
+			new Lab();
+			new Lab_Rest_Api();
 			new Media();
 		}
 

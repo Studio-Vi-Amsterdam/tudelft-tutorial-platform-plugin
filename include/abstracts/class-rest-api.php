@@ -305,7 +305,7 @@ class Rest_Api {
      * 
      * @return mixed
      */
-    public static function create_or_update_draft_module( string $type, int $post_id = 0, string $title, array $data = [], array $fields = [] ): int|array {
+    public static function create_or_update_draft_module( string $type, int $post_id = 0, string $title = '', array $data = [], array $fields = [] ): int|array {
         
         $content = '';
 
@@ -602,7 +602,21 @@ class Rest_Api {
 
         if ( !empty( $data['chapters'] ) ) {
             foreach ( $data['chapters'] as $chapter ) {
-                Chapter::update_chapter( $chapter['id'], $chapter );
+
+                if ( $chapter['id'] ) {
+                    $chapter_id = $chapter['id'];
+                    Chapter::update_chapter( $chapter_id, $chapter );
+                } 
+                else {
+                    $chapter_id = Chapter::create_chapter( $chapter['title'], $chapter['content'], $id );
+                }
+
+
+                if ( $chapter_id ) {
+                    $existing_chapters = get_field( 'chapters', $id, [] );
+                    $existing_chapters[] = $chapter_id;
+                    update_field( 'chapters', $existing_chapters, $id );
+                }
             }
         }
 

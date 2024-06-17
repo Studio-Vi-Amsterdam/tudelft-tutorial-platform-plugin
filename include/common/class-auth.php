@@ -49,9 +49,9 @@ class Auth extends Abstracts\Rest_Api {
             
             // redirect to react-app
             wp_redirect(home_url('/react-app?auth_key=' . $encoded_key));
-        }
 
-        exit;
+            exit;
+        }
     }
 
     /**

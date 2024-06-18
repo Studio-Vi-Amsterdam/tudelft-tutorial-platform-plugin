@@ -7,8 +7,8 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 use TutorialPlatform\Common\Rest_Api;
 use WP_REST_Server;
 use WP_REST_Request;
-use TutorialPlatform\Common\Gutenberg;
 use TuDelft\SurfShareKit\Inc\SurfShareKit;
+use WP_Query;
 
 //class Media_Rest_Api implements Interface_Rest_Api
 class Media_Rest_Api {
@@ -71,9 +71,38 @@ class Media_Rest_Api {
         $amount = $request->get_param( 'amount' ) ?? 12;
         $page = $request->get_param( 'page' ) ?? 1;
 
-        $data = SurfShareKit::get_items();
+        // $data = SurfShareKit::get_items();
 
-        $items = array_slice( $data['items'], ( $page - 1 ) * $amount, $amount );
+        // get items from  media library
+
+        $args = [
+            'post_type' => 'attachment',
+            'posts_per_page' => $amount,
+            'paged' => $page,
+            'post_status' => 'inherit',
+            'post_mime_type' => 'image',
+            'orderby' => 'date',
+            'order' => 'DESC',
+        ];
+
+        $query = new WP_Query( $args );
+
+        $items = [];
+
+        if ( $query->have_posts() ) {
+            while ( $query->have_posts() ) {
+                $query->the_post();
+
+                $items[] = [
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'description' => get_the_content(),
+                    'url' => wp_get_attachment_url( get_the_ID() ),
+                    'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),
+                ];
+            }
+        }
+
 
         return $items;
     }
@@ -88,9 +117,17 @@ class Media_Rest_Api {
      * @return int
      */
     public static function get_total_media( WP_REST_Request $request ): int {
-        $data = SurfShareKit::get_items();
+        // get total items from media library
 
-        return count( $data['items'] );
+        $args = [
+            'post_type' => 'attachment',
+            'post_status' => 'inherit',
+        ];
+
+        $query = new WP_Query( $args );
+
+        return $query->found_posts;
+
     }
 
     /**
@@ -106,19 +143,53 @@ class Media_Rest_Api {
 
         $file = $request->get_file_params();
 
+        $title = $request->get_param( 'title' ) ?? '';
+
         if ( empty( $file ) ) {
             return Rest_Api::send_error_response( 'media_upload_failed', 'No file uploaded' );
         }
 
         $file = reset( $file );
 
-        $response = SurfShareKit::upload_media( $file );
+        $response = SurfShareKit::upload_media( $file, $title );
 
         if ( is_wp_error( $response ) ) {
             return Rest_Api::send_error_response( 'media_upload_failed', $response->get_error_message() );
         }
 
-        return Rest_Api::send_success_response( $response );
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+
+        $upload = wp_handle_upload($file, array('test_form' => false));
+
+        if ($upload && !isset($upload['error'])) {
+            $filename = $upload['file'];
+            $filetype = wp_check_filetype($filename, null);
+            $wp_upload_dir = wp_upload_dir();
+
+            $attachment = array(
+                'guid'           => $wp_upload_dir['url'] . '/' . basename($filename),
+                'post_mime_type' => $filetype['type'],
+                'post_title'     => sanitize_file_name(pathinfo($filename, PATHINFO_FILENAME)),
+                'post_content'   => '',
+                'post_status'    => 'inherit'
+            );
+
+            $attach_id = wp_insert_attachment($attachment, $filename);
+
+            // Generate attachment metadata and update database record.
+            $attach_data = wp_generate_attachment_metadata($attach_id, $filename);
+            wp_update_attachment_metadata($attach_id, $attach_data);
+
+            update_post_meta($attach_id, 'surfsharekit_id', $response->id );
+
+            return Rest_Api::send_success_response( [
+                'id' => $attach_id,
+                'title' => $title,
+                'url' => wp_get_attachment_url( $attach_id )
+            ] );
+        }
     }
 
     /**
@@ -132,46 +203,37 @@ class Media_Rest_Api {
      */
     public static function search_media( WP_REST_Request $request ): mixed {
 
-        error_reporting( E_ALL );
-        ini_set( 'display_errors', 1 );
         $search_term = $request->get_param( 'term' ) ?? '';
 
-        $data = SurfShareKit::get_items();
+        // get items from media library
 
-        // filter items
-        $items = array_filter( $data['items'], function( $item ) use ( $search_term ) {
+        $args = [
+            'post_type' => 'attachment',
+            'posts_per_page' => -1,
+            'post_status' => 'inherit',
+            'post_mime_type' => 'image',
+            'orderby' => 'date',
+            'order' => 'DESC',
+            's' => $search_term,
+        ];
 
-            $found = false;
-            
-            if ( isset( $item['attributes'] ) ) {
-                if ( 
-                    isset( $item['attributes']['title'] ) && 
-                    stripos( 
-                        strtolower( $item['attributes']['title'] ), strtolower( $search_term ) 
-                    ) !== false 
-                ) {
-                    $found = true;
-                }
-                else if ( 
-                    isset( $item['attributes']['description'] ) && 
-                    stripos( 
-                        strtolower( $item['attributes']['description'] ), strtolower( $search_term ) 
-                    ) !== false 
-                ) {
-                    $found = true;
-                }
-                else if ( 
-                    isset( $item['attributes']['tags'] ) && 
-                    in_array( 
-                        strtolower( $search_term ), $item['attributes']['tags'] ) 
-                ) {
-                    $found = true;
-                }
+        $query = new WP_Query( $args );
+
+        $items = [];
+
+        if ( $query->have_posts() ) {
+            while ( $query->have_posts() ) {
+                $query->the_post();
+
+                $items[] = [
+                    'id' => get_the_ID(),
+                    'title' => get_the_title(),
+                    'description' => get_the_content(),
+                    'url' => wp_get_attachment_url( get_the_ID() ),
+                    'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),
+                ];
             }
-
-            return $found;
-            
-        } );
+        }
 
         return $items;
     }

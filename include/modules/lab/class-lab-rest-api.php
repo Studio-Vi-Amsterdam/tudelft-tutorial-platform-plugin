@@ -283,9 +283,7 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'no_content' );
         }
 
-        $status = $data['status'] ? $data['status'] : 'publish';
-
-        $response = parent::update_module( 'lab', $data['id'], $data['title'], $status, $data, Lab::CUSTOM_FIELDS_MAPPING );
+        $response = parent::update_module( 'lab', $data['id'], $data, Lab::CUSTOM_FIELDS_MAPPING );
 
         if ( !empty($response['error']) ) {
             Rest_Api::send_error_response( $response['error'] );

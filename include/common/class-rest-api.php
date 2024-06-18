@@ -235,6 +235,10 @@ class Rest_Api {
                 'status' => 404,
                 'message' => __( 'No software found', 'tutorial-platform' ),
             ],
+            'no_software_found' => [
+                'status' => 404,
+                'message' => __( 'No software found', 'tutorial-platform' ),
+            ],
             'delete_failed' => [
                 'status' => 500,
                 'message' => __( 'Failed to delete', 'tutorial-platform' ),

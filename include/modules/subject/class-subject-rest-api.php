@@ -276,9 +276,7 @@ class Subject_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $status = $data['status'] ? $data['status'] : 'publish';
-
-        $response = parent::update_module( 'subject', $data['id'], $data['title'], $status, $data, Subject::CUSTOM_FIELDS_MAPPING );
+        $response = parent::update_module( 'subject', $data['id'], $data, Subject::CUSTOM_FIELDS_MAPPING );
 
         if ( !empty($response['error']) ) {
             Rest_Api::send_error_response( $response['error'] );

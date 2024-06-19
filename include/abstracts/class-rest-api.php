@@ -252,10 +252,10 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'teachers', true );
         }
 
-        if ( !empty( $data['software-version'] ) ) {
+        if ( !empty( $data['software_version'] ) ) {
             $term_ids = [];
 
-            foreach( $data['software-version'] as $keyword ) {
+            foreach( $data['software_version'] as $keyword ) {
                 if ( ! term_exists( $keyword, 'software-version' ) ) {
                     $term = wp_insert_term( $keyword, 'software-version' );
                     if ( ! is_wp_error( $term ) ) {

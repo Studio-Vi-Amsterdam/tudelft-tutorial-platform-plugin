@@ -211,7 +211,7 @@ class Rest_Api {
         }
 
         // TODO: refactor this to a separate function
-        if ( isset( $data['keywords'] ) ) {
+        if ( !empty( $data['keywords'] ) ) {
 
             $term_ids = [];
 
@@ -232,7 +232,7 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'keywords', true );
         }
 
-        if ( $data['teachers'] ) {
+        if ( !empty( $data['teachers'] ) ) {
             $term_ids = [];
 
             foreach( $data['teachers'] as $keyword ) {

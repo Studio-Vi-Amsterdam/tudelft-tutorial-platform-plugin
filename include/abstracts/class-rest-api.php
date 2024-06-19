@@ -252,7 +252,7 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'teachers', true );
         }
 
-        if ( $data['software-version'] ) {
+        if ( !empty( $data['software-version'] ) ) {
             $term_ids = [];
 
             foreach( $data['software-version'] as $keyword ) {

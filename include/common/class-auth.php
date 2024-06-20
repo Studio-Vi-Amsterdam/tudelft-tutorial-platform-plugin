@@ -48,7 +48,7 @@ class Auth extends Abstracts\Rest_Api {
             update_user_meta($user->ID, 'auth_key', $random_key);
             
             // redirect to react-app
-            wp_redirect('https://tu-delft-teacher-dashboard.vercel.app/login?auth_key=' . $encoded_key);
+            wp_redirect('https://tu-delft-teacher-dashboard.vercel.app/dashboard?auth_key=' . $encoded_key);
 
             exit;
         }

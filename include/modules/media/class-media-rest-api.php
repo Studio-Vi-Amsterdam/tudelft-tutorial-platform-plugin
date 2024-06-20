@@ -80,7 +80,6 @@ class Media_Rest_Api {
             'posts_per_page' => $amount,
             'paged' => $page,
             'post_status' => 'inherit',
-            'post_mime_type' => 'image',
             'orderby' => 'date',
             'order' => 'DESC',
         ];
@@ -211,7 +210,6 @@ class Media_Rest_Api {
             'post_type' => 'attachment',
             'posts_per_page' => -1,
             'post_status' => 'inherit',
-            'post_mime_type' => 'image',
             'orderby' => 'date',
             'order' => 'DESC',
             's' => $search_term,

@@ -414,10 +414,10 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'teachers', true );
         }
 
-        if ( isset( $data['software-version'] ) ) {
+        if ( isset( $data['software_version'] ) ) {
             $term_ids = [];
 
-            foreach( $data['software-version'] as $keyword ) {
+            foreach( $data['software_version'] as $keyword ) {
                 if ( ! term_exists( $keyword, 'software-version' ) ) {
                     $term = wp_insert_term( $keyword, 'software-version' );
                     if ( ! is_wp_error( $term ) ) {
@@ -434,6 +434,10 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'software-version', true );
         }
 
+        $old_existing_chapters = get_field( 'chapters', $post_id, [] );
+
+        $updated_chapters = [];
+
         // in draft mode we reset the chapters
         update_field( 'chapters', [], $post_id );
 
@@ -443,6 +447,8 @@ class Rest_Api {
                 if ( $chapter['id'] ) {
                     $chapter_id = $chapter['id'];
                     Chapter::update_chapter( $chapter_id, $chapter );
+
+                    $updated_chapters[] = $chapter_id;
                 } 
                 else {
                     $chapter_id = Chapter::create_chapter( $chapter['title'], $chapter['content'], $post_id );
@@ -454,6 +460,13 @@ class Rest_Api {
                     $existing_chapters[] = $chapter_id;
                     update_field( 'chapters', $existing_chapters, $post_id );
                 }
+            }
+        }
+
+        // remove old chapters
+        foreach ( $old_existing_chapters as $chapter_id ) {
+            if ( ! in_array( $chapter_id, $updated_chapters ) ) {
+                Chapter::delete_chapter( $chapter_id );
             }
         }
 
@@ -600,12 +613,21 @@ class Rest_Api {
             wp_set_post_terms( $id, $term_ids, 'keywords', true );
         }
 
+        $old_existing_chapters = get_field( 'chapters', $id, [] );
+
+        $updated_chapters = [];
+
+        // in draft mode we reset the chapters
+        update_field( 'chapters', [], $id );
+
         if ( !empty( $data['chapters'] ) ) {
             foreach ( $data['chapters'] as $chapter ) {
 
                 if ( $chapter['id'] ) {
                     $chapter_id = $chapter['id'];
                     Chapter::update_chapter( $chapter_id, $chapter );
+
+                    $updated_chapters[] = $chapter_id;
                 } 
                 else {
                     $chapter_id = Chapter::create_chapter( $chapter['title'], $chapter['content'], $id );
@@ -617,6 +639,13 @@ class Rest_Api {
                     $existing_chapters[] = $chapter_id;
                     update_field( 'chapters', $existing_chapters, $id );
                 }
+            }
+        }
+
+        // remove old chapters
+        foreach ( $old_existing_chapters as $chapter_id ) {
+            if ( ! in_array( $chapter_id, $updated_chapters ) ) {
+                Chapter::delete_chapter( $chapter_id );
             }
         }
 

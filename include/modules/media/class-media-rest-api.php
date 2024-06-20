@@ -55,6 +55,15 @@ class Media_Rest_Api {
                 return Rest_Api::is_user_allowed( $request );
             },
         ] );
+
+        // delete media item
+        register_rest_route( Rest_Api::API_NAMESPACE, '/media/delete', [
+            'methods' => WP_REST_Server::DELETABLE,
+            'callback' => [ self::class, 'delete_media' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
     }
 
     /**
@@ -98,6 +107,8 @@ class Media_Rest_Api {
                     'description' => get_the_content(),
                     'url' => wp_get_attachment_url( get_the_ID() ),
                     'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),
+                    'published' => get_the_date( 'd.m.Y H:i' ),
+                    'media_type' => get_post_mime_type( get_the_ID() ),
                 ];
             }
         }
@@ -229,10 +240,42 @@ class Media_Rest_Api {
                     'description' => get_the_content(),
                     'url' => wp_get_attachment_url( get_the_ID() ),
                     'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),
+                    'published' => get_the_date( 'd.m.Y H:i' ),
+                    'media_type' => get_post_mime_type( get_the_ID() ),
                 ];
             }
         }
 
         return $items;
+    }
+
+    /**
+     * Delete media item
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function delete_media( WP_REST_Request $request ): mixed {
+
+        $media_id = $request->get_param( 'id' );
+
+        if ( ! $media_id ) {
+            return Rest_Api::send_error_response( 'media_delete_failed' );
+        }
+
+        // $response = SurfShareKit::delete_media( $media_id );
+
+       // delete media item from media library
+
+        $post = wp_delete_attachment( $media_id, true );
+
+        if ( ! $post ) {
+            return Rest_Api::send_error_response( 'media_delete_failed' );
+        }
+
+        return Rest_Api::send_success_response( 'Media item deleted' );
     }
 }

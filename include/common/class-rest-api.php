@@ -271,6 +271,10 @@ class Rest_Api {
                 'status' => 401,
                 'message' => __( 'Authentication failed', 'tutorial-platform' ),
             ],
+            'media_delete_failed' => [
+                'status' => 500,
+                'message' => __( 'Failed to delete media', 'tutorial-platform' ),
+            ],
         ];
     }
 

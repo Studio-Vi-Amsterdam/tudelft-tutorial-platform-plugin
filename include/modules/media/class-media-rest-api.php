@@ -153,6 +153,7 @@ class Media_Rest_Api {
 
         $file = $request->get_file_params();
 
+        // title that will be used for Alt text
         $title = $request->get_param( 'title' ) ?? '';
 
         if ( empty( $file ) ) {
@@ -161,7 +162,9 @@ class Media_Rest_Api {
 
         $file = reset( $file );
 
-        $response = SurfShareKit::upload_media( $file, $title );
+        $file_title = $file['name'];
+
+        $response = SurfShareKit::upload_media( $file, $file_title );
 
         if ( is_wp_error( $response ) ) {
             return Rest_Api::send_error_response( 'media_upload_failed', $response->get_error_message() );
@@ -198,7 +201,7 @@ class Media_Rest_Api {
 
             return Rest_Api::send_success_response( [
                 'id' => $attach_id,
-                'title' => $title,
+                'title' => $file_title,
                 'url' => wp_get_attachment_url( $attach_id )
             ] );
         }

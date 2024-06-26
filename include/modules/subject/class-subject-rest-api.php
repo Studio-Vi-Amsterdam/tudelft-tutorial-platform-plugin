@@ -77,7 +77,7 @@ class Subject_Rest_Api extends Abstracts\Rest_Api {
         ] );
 
         register_rest_route( Rest_Api::API_NAMESPACE, '/subjects/create/info', [
-            'methods' => WP_REST_Server::EDITABLE,
+            'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_subject_create_info' ],
             'permission_callback' => function( $request ) {
                 return Rest_Api::is_user_allowed( $request );
@@ -298,12 +298,15 @@ class Subject_Rest_Api extends Abstracts\Rest_Api {
          *  Required data for creating subject
          * 
          *  categories
+         *  keywords
          */ 
 
         $categories = Taxonomy::get_categories( false, true );
+        $keywords = Taxonomy::get_keywords(false, true);
 
         return [
             'categories' => $categories,
+            'keywords' => $keywords,
         ];
     }
 }    

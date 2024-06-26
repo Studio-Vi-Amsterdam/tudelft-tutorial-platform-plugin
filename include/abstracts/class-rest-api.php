@@ -96,6 +96,7 @@ class Rest_Api {
             'content' => Gutenberg::parse_acf_gutenberg_block( $module->post_content ),
             'chapters' => $has_chapters ? Chapter::get_chapters( $module->ID ) : false,
             'publish_date' => $module->post_date,
+            'featured_image' => get_field( 'featured_image', $module->ID),
         ];
 
         foreach ( $taxonomies as $taxonomy ) {

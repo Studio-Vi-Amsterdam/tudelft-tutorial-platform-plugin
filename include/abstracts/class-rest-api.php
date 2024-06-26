@@ -196,12 +196,12 @@ class Rest_Api {
             }
         }
 
-        $post_data = [
+        $post_data = wp_slash( [
             'post_title' => $title,
             'post_content' => $content,
             'post_status' => in_array( $status, self::MODULE_STATUS ) ? $status : 'publish',
             'post_type' => $type,
-        ];
+        ] );
 
         $post_id = wp_insert_post( $post_data );
 
@@ -347,20 +347,20 @@ class Rest_Api {
                 ];
             }
 
-            wp_update_post( [
+            wp_update_post( wp_slash( [
                 'ID' => $post_id,
                 'post_title' => $title,
                 'post_content' => $content,
-            ] );
+            ] ) );
         }
         else {
             // create a new draft
-            $post_data = [
+            $post_data = wp_slash( [
                 'post_title' => $title,
                 'post_content' => $content,
                 'post_status' => 'draft',
                 'post_type' => $type,
-            ];
+            ] );
 
             $post_id = wp_insert_post( $post_data );
 
@@ -600,10 +600,10 @@ class Rest_Api {
                 $content .= Gutenberg::generate_gutenberg_block( $block );
             }
 
-            wp_update_post( [
+            wp_update_post( wp_slash( [
                 'ID' => $id,
                 'post_content' => $content,
-            ] );
+            ] ) );
         }
 
         if ( !empty( $data['teachers'] ) ) {

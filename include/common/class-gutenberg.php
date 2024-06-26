@@ -81,10 +81,10 @@ class Gutenberg {
             }
         }
 
-        $post_data = [
+        $post_data = wp_slash( [
             'ID' => $post_id,
             'post_content' => $content,
-        ];
+        ] );
 
         wp_update_post($post_data);
     }

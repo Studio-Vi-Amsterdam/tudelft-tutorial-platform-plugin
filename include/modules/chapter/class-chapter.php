@@ -54,12 +54,12 @@ class Chapter {
             }
         }
 
-        $chapter_id = wp_insert_post( [
+        $chapter_id = wp_insert_post( wp_slash( [
             'post_title' => $title,
             'post_content' => $post_content,
             'post_type' => 'chapter',
             'post_status' => 'publish',
-        ] );
+        ] ) );
 
         if ( is_wp_error( $chapter_id ) ) {
             return false;
@@ -186,11 +186,11 @@ class Chapter {
             }
         }
 
-        $result = wp_update_post( [
+        $result = wp_update_post( wp_slash( [
             'ID' => $id,
             'post_title' => $data['title'] ? $data['title'] : $chapter->post_title,
             'post_content' => $content,
-        ] );
+        ] ) );
 
         if ( is_wp_error( $result ) ) {
             return [

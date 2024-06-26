@@ -193,6 +193,8 @@ class Media_Rest_Api {
             wp_update_attachment_metadata($attach_id, $attach_data);
 
             update_post_meta($attach_id, 'surfsharekit_id', $response->id );
+            update_post_meta($attach_id, '_wp_attachment_image_alt', $title );
+            update_post_meta($attach_id, 'title', $title);
 
             return Rest_Api::send_success_response( [
                 'id' => $attach_id,

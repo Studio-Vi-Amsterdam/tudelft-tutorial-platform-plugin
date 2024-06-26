@@ -15,6 +15,7 @@ class Software {
     const CUSTOM_FIELDS_MAPPING = [
         "description" => "description",
         "useful_links" => "useful_links",
+        "featured_image" => "featured_image",
     ];
     
     public function __construct() {

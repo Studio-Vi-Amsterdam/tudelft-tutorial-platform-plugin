@@ -16,6 +16,7 @@ class Subject {
         "description" => "description",
         "useful_links" => "useful_links",
         "category" => "category",
+        "featured_image" => "featured_image",
     ];
     
     public function __construct() {

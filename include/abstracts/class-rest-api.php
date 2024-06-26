@@ -606,6 +606,46 @@ class Rest_Api {
             ] );
         }
 
+        if ( !empty( $data['teachers'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['teachers'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'teachers' ) ) {
+                    $term = wp_insert_term( $keyword, 'teachers' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'teachers' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $id, $term_ids, 'teachers', true );
+        }
+
+        if ( !empty( $data['software_version'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['software_version'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'software-version' ) ) {
+                    $term = wp_insert_term( $keyword, 'software-version' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'software-version' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $id, $term_ids, 'software-version', true );
+        }
+
         if ( isset( $data['keywords'] ) ) {
 
             $term_ids = [];

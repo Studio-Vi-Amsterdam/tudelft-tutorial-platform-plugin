@@ -13,9 +13,11 @@ class Course {
      * Value is the custom field name in the API response
      */
     const CUSTOM_FIELDS_MAPPING = [
+        "description" => "description",
+        "useful_links" => "useful_links",
+        "featured_image" => "featured_image",
         "course_code" => "course_code",
         "study" => "study",
-        "featured_image" => "featured_image",
         "faculty" => "faculty",
     ];
     

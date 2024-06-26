@@ -152,7 +152,7 @@ class Subject_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $subject = parent::get_single_module( 'subject', $id, Subject::CUSTOM_FIELDS_MAPPING, true, [ 'category' ] );
+        $subject = parent::get_single_module( 'subject', $id, Subject::CUSTOM_FIELDS_MAPPING, true, [ 'keywords', 'category' ] );
 
         if ( !empty( $subject['error'] ) ) {
             Rest_Api::send_error_response( $subject['error'] );

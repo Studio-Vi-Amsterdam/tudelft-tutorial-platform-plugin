@@ -151,7 +151,7 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
             Rest_Api::send_error_response( 'id_required' );
         }
 
-        $software = parent::get_single_module( 'software', $id, Software ::CUSTOM_FIELDS_MAPPING, true, [ 'software-version' ] );
+        $software = parent::get_single_module( 'software', $id, Software ::CUSTOM_FIELDS_MAPPING, true, [ 'keywords', 'software-version' ] );
 
         if ( !empty( $software['error'] ) ) {
             Rest_Api::send_error_response( $software['error'] );

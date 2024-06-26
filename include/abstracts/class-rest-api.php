@@ -574,6 +574,19 @@ class Rest_Api {
             ];
         }
 
+        if ( !empty($data['status']) ) {
+            if ( ! in_array( $data['status'], self::MODULE_STATUS ) ) {
+                return [
+                    'error' => "invalid_status",
+                ];
+            }
+
+            wp_update_post( [
+                'ID' => $id,
+                'post_status' => $data['status'],
+            ] );
+        }
+
         // if ( $module->post_author != $current_user->ID ) {
         //     return [
         //         'error' => "no_permission",

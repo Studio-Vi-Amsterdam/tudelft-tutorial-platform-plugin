@@ -308,7 +308,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         $softwares = Software::get_softwares();
         $subjects = Subject::get_user_subjects();
         $faculties = [
-            'BK'
+            'Bouwkunde'
         ];
         $keywords = Taxonomy::get_keywords(false, true);
         $teachers = Taxonomy::get_teachers(false, true);

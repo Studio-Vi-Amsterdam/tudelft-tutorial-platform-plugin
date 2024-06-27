@@ -314,7 +314,7 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
         $keywords = Taxonomy::get_keywords( false, true );
         $teachers = Taxonomy::get_teachers( false, true );
         $faculty = [
-            'BK'
+            'Bouwkunde'
         ];
 
         return [

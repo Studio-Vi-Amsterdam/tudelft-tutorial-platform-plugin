@@ -18,6 +18,7 @@ class Course {
         "featured_image" => "featured_image",
         "course_code" => "course_code",
         "study" => "study",
+        "secondary_study" => "secondary_study",
         "faculty" => "faculty",
     ];
     

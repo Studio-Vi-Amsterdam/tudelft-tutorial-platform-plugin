@@ -137,12 +137,15 @@ class Gutenberg {
                  * TODO: refactor this
                  */
                 if ( strpos($key, '_row_') ) {
-                    $key = str_replace('_content_card_row_', $block['block_name'] . '_content_card_row_', $key);
+                    $key = str_replace('content_card_row_', $block['block_name'] . '_content_card_row_', $key);
+                    $key = str_replace('card_link', $block['block_name'] . '_card_link', $key);
                     $key = str_replace('card_title', $block['block_name'] . '_card_title', $key);
+                    $data[$key] = $value;
                 }
                 else if ( strpos($key, '_answers_') ) {
-                    $key = str_replace('_answers_', $block['block_name'] . '_answers_', $key);
+                    $key = str_replace('answers_', $block['block_name'] . '_answers_', $key);
                     $key = str_replace('answer', $block['block_name'] . '_answer', $key);
+                    $data[$key] = $value;
                 }
                 else {
                     $data[$block['block_name'] . '_' . $key] = $value;

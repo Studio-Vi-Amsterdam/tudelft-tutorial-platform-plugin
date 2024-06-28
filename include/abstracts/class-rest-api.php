@@ -273,7 +273,25 @@ class Rest_Api {
             wp_set_post_terms( $post_id, $term_ids, 'software-version', true );
         }
 
-        
+        if ( !empty( $data['category'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['category'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'category' ) ) {
+                    $term = wp_insert_term( $keyword, 'category' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'category' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'category', true );
+        }
 
         if ( !empty( $data['chapters'] ) ) {
             foreach ( $data['chapters'] as $chapter ) {
@@ -433,6 +451,26 @@ class Rest_Api {
                 }
             }
             wp_set_post_terms( $post_id, $term_ids, 'software-version', true );
+        }
+
+        if ( !empty( $data['category'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['category'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'category' ) ) {
+                    $term = wp_insert_term( $keyword, 'category' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'category' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'category', true );
         }
 
         $old_existing_chapters = get_field( 'chapters', $post_id, [] );
@@ -644,6 +682,26 @@ class Rest_Api {
                 }
             }
             wp_set_post_terms( $id, $term_ids, 'software-version', true );
+        }
+
+        if ( !empty( $data['category'] ) ) {
+            $term_ids = [];
+
+            foreach( $data['category'] as $keyword ) {
+                if ( ! term_exists( $keyword, 'category' ) ) {
+                    $term = wp_insert_term( $keyword, 'category' );
+                    if ( ! is_wp_error( $term ) ) {
+                        $term_ids[] = $term['term_id'];
+                    }
+                }
+                else {
+                    $term = get_term_by( 'name', $keyword, 'category' );
+                    if ( $term ) {
+                        $term_ids[] = $term->term_id;
+                    }
+                }
+            }
+            wp_set_post_terms( $post_id, $term_ids, 'category', true );
         }
 
         if ( isset( $data['keywords'] ) ) {

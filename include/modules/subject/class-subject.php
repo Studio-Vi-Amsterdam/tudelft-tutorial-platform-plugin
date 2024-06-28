@@ -16,6 +16,7 @@ class Subject {
         "description" => "description",
         "useful_links" => "useful_links",
         "category" => "category",
+        "secondary_category" => "secondary_category",
         "featured_image" => "featured_image",
     ];
     

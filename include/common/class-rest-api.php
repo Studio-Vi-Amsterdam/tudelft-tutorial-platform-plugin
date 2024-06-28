@@ -17,6 +17,7 @@ use TutorialPlatform\Modules\Taxonomy\Taxonomy_Rest_Api;
 use TutorialPlatform\Modules\Software\Software_Rest_Api;
 use TutorialPlatform\Modules\Tutorial\Tutorial_Rest_Api;
 use TutorialPlatform\Modules\Subject\Subject_Rest_Api;
+use TutorialPlatform\Modules\User\User_Rest_Api;
 use WP_Error;
 use WP_REST_Request;
 
@@ -94,6 +95,7 @@ class Rest_Api {
         Taxonomy_Rest_Api::register_routes();
         Subject_Rest_Api::register_routes();
         Media_Rest_Api::register_routes();
+        User_Rest_Api::register_routes();
     }
 
     /**

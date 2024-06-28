@@ -25,6 +25,8 @@ use TutorialPlatform\Modules\Media\Media;
 use TutorialPlatform\Modules\Media\Media_Rest_Api;
 use TutorialPlatform\Modules\Subject\Subject;
 use TutorialPlatform\Modules\Subject\Subject_Rest_Api;
+use TutorialPlatform\Modules\User\User;
+use TutorialPlatform\Modules\User\User_Rest_Api;
 
 defined( 'ABSPATH' ) || die( "Can't access directly" );
 
@@ -156,6 +158,8 @@ if ( ! class_exists( 'TutorialPlatform' ) ) {
 			new Lab();
 			new Lab_Rest_Api();
 			new Media();
+			new User();
+			new User_Rest_Api();
 		}
 
 

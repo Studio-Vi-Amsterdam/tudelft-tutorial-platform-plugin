@@ -22,6 +22,7 @@ class Tutorial {
         "level" => "level",
         "featured_image" => "featured_image",
         "faculty" => "faculty",
+        "course" => "course",
     ];
 
     public function __construct() {

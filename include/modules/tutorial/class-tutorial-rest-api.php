@@ -306,7 +306,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
          */
 
         $softwares = Software::get_softwares();
-        $subjects = Subject::get_user_subjects();
+        $subjects = Subject::get_all_subjects();
         $faculties = [
             'Bouwkunde'
         ];

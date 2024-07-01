@@ -51,4 +51,30 @@ class Subject {
 
         return $response;
     }
+
+    /**
+     * Get all subjects
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_all_subjects() {
+
+        $subjects = get_posts( [
+            'post_type' => 'subject',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+        ] );
+
+        $response = [];
+        foreach ( $subjects as $subject ) {
+            $response[] = [
+                'id' => $subject->ID,
+                'title' => $subject->post_title,
+            ];
+        }
+
+        return $response;
+    }
 }

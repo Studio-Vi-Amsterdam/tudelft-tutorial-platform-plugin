@@ -25,4 +25,30 @@ class Course {
     public function __construct() {
         // Do nothing
     }
+
+    /**
+     * Get all Courses
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_all_courses() {
+
+        $courses = get_posts( [
+            'post_type' => 'course',
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+        ] );
+
+        $response = [];
+        foreach ( $courses as $course ) {
+            $response[] = [
+                'id' => $course->ID,
+                'title' => $course->post_title,
+            ];
+        }
+
+        return $response;
+    }
 }

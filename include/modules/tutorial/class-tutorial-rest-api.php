@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Abstracts;
 use TutorialPlatform\Common\Rest_Api;
+use TutorialPlatform\Modules\Course\Course;
 use TutorialPlatform\Modules\Software\Software;
 use TutorialPlatform\Modules\Subject\Subject;
 use TutorialPlatform\Modules\Taxonomy\Taxonomy;
@@ -300,6 +301,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
          * Softwares,
          * Software versions (for each software),
          * Subjects,
+         * Courses,
          * keywords,
          * teachers
          * Faculties
@@ -307,6 +309,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
 
         $softwares = Software::get_softwares();
         $subjects = Subject::get_all_subjects();
+        $courses = Course::get_all_courses();
         $faculties = [
             'Bouwkunde'
         ];
@@ -316,6 +319,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         Rest_Api::send_success_response([
             'softwares' => $softwares,
             'subjects' => $subjects,
+            'courses' => $courses,
             'faculties' => $faculties,
             'keywords' => $keywords,
             'teachers' => $teachers

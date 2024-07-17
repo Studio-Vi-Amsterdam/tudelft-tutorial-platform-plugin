@@ -35,23 +35,24 @@ class Auth extends Abstracts\Rest_Api {
      */
     public function redirect_user_after_login($user_login, $user) {
         
-        $use_role = $user->roles[0];
+        // $use_role = $user->roles[0];
 
-        if ($use_role == 'administrator') {
-            // admin chooses do they go to wp-admin or dashboard
-        } else {
-            $random_key = self::generate_random_key($user->user_login);
+        // if ($use_role == 'administrator') {
+        //     // admin chooses do they go to wp-admin or dashboard
+        // } else {
+        // }
 
-            $encoded_key = base64_encode($random_key);
+        $random_key = self::generate_random_key($user->user_login);
 
-            // save random key to user meta
-            update_user_meta($user->ID, 'auth_key', $random_key);
-            
-            // redirect to react-app
-            wp_redirect('https://tu-delft-teacher-dashboard.vercel.app/dashboard?auth_key=' . $encoded_key);
+        $encoded_key = base64_encode($random_key);
 
-            exit;
-        }
+        // save random key to user meta
+        update_user_meta($user->ID, 'auth_key', $random_key);
+        
+        // redirect to react-app
+        wp_redirect('https://tu-delft-teacher-dashboard.vercel.app/dashboard?auth_key=' . $encoded_key);
+
+        exit;
     }
 
     /**

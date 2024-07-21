@@ -26,7 +26,7 @@ class Gutenberg {
         'tu-delft-text-image',
         'tu-delft-video-text',
         'tu-delft-text-video',
-        'h5p_block',
+        'tu-delft-h5p',
     ];
 
     public function __construct() {

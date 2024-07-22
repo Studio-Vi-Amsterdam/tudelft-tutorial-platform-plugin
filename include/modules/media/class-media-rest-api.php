@@ -64,6 +64,14 @@ class Media_Rest_Api {
                 return Rest_Api::is_user_allowed( $request );
             },
         ] );
+
+        register_rest_route( Rest_Api::API_NAMESPACE, '/media/update', [
+            'methods' => WP_REST_Server::EDITABLE,
+            'callback' => [ self::class, 'update_media' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
     }
 
     /**
@@ -164,11 +172,11 @@ class Media_Rest_Api {
 
         $file_title = $file['name'];
 
-        $response = SurfShareKit::upload_media( $file, $file_title );
+        // $response = SurfShareKit::upload_media( $file, $file_title );
 
-        if ( is_wp_error( $response ) ) {
-            return Rest_Api::send_error_response( 'media_upload_failed', $response->get_error_message() );
-        }
+        // if ( is_wp_error( $response ) ) {
+        //     return Rest_Api::send_error_response( 'media_upload_failed', $response->get_error_message() );
+        // }
 
         require_once(ABSPATH . 'wp-admin/includes/file.php');
         require_once(ABSPATH . 'wp-admin/includes/image.php');
@@ -195,8 +203,8 @@ class Media_Rest_Api {
             $attach_data = wp_generate_attachment_metadata($attach_id, $filename);
             wp_update_attachment_metadata($attach_id, $attach_data);
 
-            update_post_meta($attach_id, 'surfsharekit_id', $response->id );
-            update_post_meta($attach_id, '_wp_attachment_image_alt', $title );
+            // update_post_meta($attach_id, 'surfsharekit_id', $response->id );
+            // update_post_meta($attach_id, '_wp_attachment_image_alt', $title );
             update_post_meta($attach_id, 'title', $title);
 
             return Rest_Api::send_success_response( [
@@ -282,5 +290,37 @@ class Media_Rest_Api {
         }
 
         return Rest_Api::send_success_response( 'Media item deleted' );
+    }
+
+    /**
+     * Update media item
+     * 
+     * @since 1.0.0
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @return mixed
+     */
+    public static function update_media( WP_REST_Request $request ): mixed {
+            
+        $media_id = $request->get_param( 'id' );
+        $title = $request->get_param( 'title' );
+
+        if ( ! $media_id || ! $title ) {
+            return Rest_Api::send_error_response( 'media_update_failed' );
+        }
+
+        // update media item in media library
+        $post = wp_update_post( [
+            'ID' => $media_id,
+            'post_title' => $title,
+        ] );
+
+        if ( ! $post ) {
+            return Rest_Api::send_error_response( 'media_update_failed' );
+        }
+
+        return Rest_Api::send_success_response( 'Media item updated' );
+            
     }
 }

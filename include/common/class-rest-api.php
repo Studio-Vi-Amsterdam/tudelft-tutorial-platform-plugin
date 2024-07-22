@@ -277,6 +277,10 @@ class Rest_Api {
                 'status' => 500,
                 'message' => __( 'Failed to delete media', 'tutorial-platform' ),
             ],
+            'media_update_failed' => [
+                'status' => 500,
+                'message' => __( 'Failed to update media', 'tutorial-platform' ),
+            ],
         ];
     }
 

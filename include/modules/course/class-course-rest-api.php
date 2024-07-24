@@ -183,7 +183,9 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
 
         $status = $data['status'] ? $data['status'] : 'publish';
 
-        $response = parent::create_module( 'course', $data['title'], $status, $data, Course::CUSTOM_FIELDS_MAPPING );
+        $media_ids = $data['mediaIds'] ? $data['mediaIds'] : [];
+
+        $response = parent::create_module( 'course', $data['title'], $status, $data, Course::CUSTOM_FIELDS_MAPPING, $media_ids );
 
         if ( !empty($response['error']) ) {
             Rest_Api::send_error_response( $response['error'] );

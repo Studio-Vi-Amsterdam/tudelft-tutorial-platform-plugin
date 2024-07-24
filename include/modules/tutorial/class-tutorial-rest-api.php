@@ -186,7 +186,9 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
 
         $status = $data['status'] ? $data['status'] : 'publish';
 
-        $response = parent::create_module( 'tutorial', $data['title'], $status, $data, Tutorial::CUSTOM_FIELDS_MAPPING );
+        $media_ids = $data['mediaIds'] ? $data['mediaIds'] : [];
+
+        $response = parent::create_module( 'tutorial', $data['title'], $status, $data, Tutorial::CUSTOM_FIELDS_MAPPING, $media_ids );
 
         if ( !empty($response['error']) ) {
             Rest_Api::send_error_response( $response['error'] );

@@ -6,6 +6,7 @@ defined( 'ABSPATH' ) || die( "Can't access directly" );
 
 use TutorialPlatform\Common\Gutenberg;
 use TutorialPlatform\Modules\Chapter\Chapter;
+use TuDelft\SurfShareKit\Inc\SurfShareKit;
 class Rest_Api {
 
     private const MODULE_STATUS = [
@@ -164,13 +165,15 @@ class Rest_Api {
      * @param string $title Module title
      * @param string $status Module status
      * @param array $data Module data
+     * @param array $fields Custom fields mapping
+     * @param array $media_ids Media IDs
      * 
      * @since 1.0.0
      * 
      * @return int|array
      * 
      */
-    public static function create_module( string $type, string $title, string $status, array $data = [], array $fields = [] ): int|array {
+    public static function create_module( string $type, string $title, string $status, array $data = [], array $fields = [], $media_ids = [] ): int|array {
 
         
         $content = '';
@@ -311,6 +314,23 @@ class Rest_Api {
                 update_field( $acf_field, $data[ $api_field ], $post_id );
             }
         }
+
+        // Create SSK Media
+        $ssk_media = [];
+
+        foreach ( $media_ids as $media_id ) {
+            $ssk_media[] = [
+                'title' => get_post_meta( $media_id, 'title', true ),
+                'fileId' => get_post_meta( $media_id, 'surfsharekit_id', true ),
+                'access' => 'openaccess'
+            ];
+        }
+
+        $repo_data = SurfShareKit::generate_repo_item($ssk_media, $title, [
+            wp_get_current_user()->user_login,
+        ]);
+
+        update_post_meta( $post_id, 'surfsharekit_id', $repo_data->id );
 
         return $post_id;
     }

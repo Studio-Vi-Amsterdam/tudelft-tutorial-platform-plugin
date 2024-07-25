@@ -667,6 +667,8 @@ class Rest_Api {
         if ( !empty( $data['teachers'] ) ) {
             $term_ids = [];
 
+            wp_set_post_terms( $id, [], 'teachers', false );
+
             foreach( $data['teachers'] as $keyword ) {
                 if ( ! term_exists( $keyword, 'teachers' ) ) {
                     $term = wp_insert_term( $keyword, 'teachers' );
@@ -686,6 +688,8 @@ class Rest_Api {
 
         if ( !empty( $data['software_version'] ) ) {
             $term_ids = [];
+
+            wp_set_post_terms( $id, [], 'software-version', false );
 
             foreach( $data['software_version'] as $keyword ) {
                 if ( ! term_exists( $keyword, 'software-version' ) ) {
@@ -707,6 +711,8 @@ class Rest_Api {
         if ( !empty( $data['category'] ) ) {
             $term_ids = [];
 
+            wp_set_post_terms( $id, [], 'category', false );
+
             foreach( $data['category'] as $keyword ) {
                 if ( ! term_exists( $keyword, 'category' ) ) {
                     $term = wp_insert_term( $keyword, 'category' );
@@ -721,10 +727,12 @@ class Rest_Api {
                     }
                 }
             }
-            wp_set_post_terms( $post_id, $term_ids, 'category', true );
+            wp_set_post_terms( $id, $term_ids, 'category', true );
         }
 
         if ( isset( $data['keywords'] ) ) {
+
+            wp_set_post_terms( $id, [], 'keywords', false );
 
             $term_ids = [];
 

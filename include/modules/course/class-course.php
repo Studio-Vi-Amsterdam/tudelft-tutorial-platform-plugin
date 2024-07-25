@@ -15,6 +15,7 @@ class Course {
     const CUSTOM_FIELDS_MAPPING = [
         "description" => "description",
         "useful_links" => "useful_links",
+        "useful_links_title" => "useful_links_title",
         "featured_image" => "featured_image",
         "course_code" => "course_code",
         "study" => "study",

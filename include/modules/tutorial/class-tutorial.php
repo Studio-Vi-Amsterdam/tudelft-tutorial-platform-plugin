@@ -15,6 +15,7 @@ class Tutorial {
     const CUSTOM_FIELDS_MAPPING = [
         "description" => "description",
         "useful_links" => "useful_links",
+        "useful_links_title" => "useful_links_title",
         "primary_software" => "primary_software",
         "software_version" => "software_version",
         "primary_subject" => "primary_subject",

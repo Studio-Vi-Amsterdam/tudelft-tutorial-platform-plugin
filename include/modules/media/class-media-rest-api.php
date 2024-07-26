@@ -277,7 +277,7 @@ class Media_Rest_Api {
         }
 
         // make sure you are the owner of the media item
-        if ( get_post_field( 'post_author', $media_id ) !== get_current_user_id() ) {
+        if ( (int) get_post_field( 'post_author', $media_id ) !== (int) get_current_user_id() ) {
             return Rest_Api::send_error_response( 'media_delete_failed' );
         }
 

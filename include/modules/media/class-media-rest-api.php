@@ -88,8 +88,6 @@ class Media_Rest_Api {
         $amount = $request->get_param( 'amount' ) ?? 12;
         $page = $request->get_param( 'page' ) ?? 1;
 
-        // $data = SurfShareKit::get_items();
-
         // get items from  media library
 
         $args = [
@@ -117,6 +115,9 @@ class Media_Rest_Api {
                     'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),
                     'published' => get_the_date( 'd.m.Y H:i' ),
                     'media_type' => get_post_mime_type( get_the_ID() ),
+                    // get owner of media item
+                    'owner' => get_the_author(),
+                    'is_media_owner' => get_the_author_meta( 'ID' ) === get_current_user_id(),
                 ];
             }
         }
@@ -275,9 +276,10 @@ class Media_Rest_Api {
             return Rest_Api::send_error_response( 'media_delete_failed' );
         }
 
-        // $response = SurfShareKit::delete_media( $media_id );
-
-       // delete media item from media library
+        // make sure you are the owner of the media item
+        if ( get_post_field( 'post_author', $media_id ) !== get_current_user_id() ) {
+            return Rest_Api::send_error_response( 'media_delete_failed' );
+        }
 
         $post = wp_delete_attachment( $media_id, true );
 

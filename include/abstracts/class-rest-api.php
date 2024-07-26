@@ -19,21 +19,27 @@ class Rest_Api {
      * Get modules from tutor
      * 
      * @param string $type Module type
+     * @param int $amount Amount of modules to get
+     * @param string $status Module status
+     * @param bool $only_current_author Get only modules from current author
      * 
      * @since 1.0.0
      * 
      * @return mixed
      */
-    public static function get_modules( string $type, int $amount = -1, string $status = 'publish' ): mixed {
+    public static function get_modules( string $type, int $amount = -1, string $status = 'publish', bool $only_current_author = true ): mixed {
 
         $current_user = wp_get_current_user();
 
         $args = [
             'post_type' => $type,
-            'author' => $current_user->ID,
             'posts_per_page' => $amount,
             'post_status' => in_array( $status, self::MODULE_STATUS ) ? $status : 'publish',
         ];
+
+        if ( $only_current_author ) {
+            $args['author'] = $current_user->ID;
+        }
 
         $modules = get_posts( $args );
 

@@ -31,6 +31,14 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/all', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_all_tutorials' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/tutorials/preview', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_tutorial_preview' ],
@@ -103,6 +111,29 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         $status = $request->get_param( 'status' ) ? $request->get_param( 'status' ) : 'publish';
         
         $tutorials = parent::get_modules( 'tutorial', $amount, $status );
+
+        if ( !empty( $tutorials['error'] ) ) {
+            Rest_Api::send_error_response( $tutorials['error'] );
+        }
+
+        return $tutorials;
+    }
+
+    /**
+     * Get all tutorials
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_all_tutorials( WP_REST_Request $request ): mixed {
+    
+        $amount = $request->get_param( 'amount' ) ? $request->get_param( 'amount' ) : -1;
+        $status = $request->get_param( 'status' ) ? $request->get_param( 'status' ) : 'publish';
+        
+        $tutorials = parent::get_modules( 'tutorial', $amount, $status, false );
 
         if ( !empty( $tutorials['error'] ) ) {
             Rest_Api::send_error_response( $tutorials['error'] );

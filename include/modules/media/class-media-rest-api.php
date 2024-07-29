@@ -109,7 +109,7 @@ class Media_Rest_Api {
 
                 $items[] = [
                     'id' => get_the_ID(),
-                    'title' => get_the_title(),
+                    'title' => get_post_meta( get_the_ID(), 'title', true ),
                     'description' => get_the_content(),
                     'url' => wp_get_attachment_url( get_the_ID() ),
                     'tags' => wp_get_post_tags( get_the_ID(), [ 'fields' => 'names' ] ),

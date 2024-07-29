@@ -140,6 +140,8 @@ class Gutenberg {
                     $key = str_replace('content_card_row_', $block['block_name'] . '_content_card_row_', $key);
                     $key = str_replace('card_link', $block['block_name'] . '_card_link', $key);
                     $key = str_replace('card_title', $block['block_name'] . '_card_title', $key);
+                    $key = str_replace('card_is_custom_link', $block['block_name'] . '_card_is_custom_link', $key);
+                    $key = str_replace('card_custom_link', $block['block_name'] . '_card_custom_link', $key);
                     $data[$key] = $value;
                 }
                 else if ( strpos($key, '_answers_') ) {
@@ -151,8 +153,6 @@ class Gutenberg {
                     $data[$block['block_name'] . '_' . $key] = $value;
                     $data["_" . $block['block_name'] . '_' . $key] = $block['block_name'] . '_' . $key;
                 }
-                
-                
             }
             $block_markup = self::generate_acf_gutenberg_block($data, $block_name);
             $block_markup .= "\n";

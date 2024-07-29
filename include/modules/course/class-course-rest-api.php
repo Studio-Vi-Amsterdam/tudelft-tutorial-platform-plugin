@@ -28,6 +28,14 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
             },
         ] );
 
+        register_rest_route( Rest_Api::API_NAMESPACE, '/courses/all', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [ self::class, 'get_all_courses' ],
+            'permission_callback' => function( $request ) {
+                return Rest_Api::is_user_allowed( $request );
+            },
+        ] );
+
         register_rest_route( Rest_Api::API_NAMESPACE, '/courses/preview', [
             'methods' => WP_REST_Server::READABLE,
             'callback' => [ self::class, 'get_courses_preview' ],
@@ -100,6 +108,29 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
         $status = $request->get_param( 'status' ) ? $request->get_param( 'status' ) : 'publish';
 
         $courses = parent::get_modules( 'course', $amount, $status );
+
+        if ( !empty( $courses['error'] ) ) {
+            Rest_Api::send_error_response( $courses['error'] );
+        }
+
+        return $courses;
+    }
+
+    /**
+     * Get all courses
+     * 
+     * @param WP_REST_Request $request
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_all_courses( WP_REST_Request $request ): mixed {
+    
+        $amount = $request->get_param( 'amount' ) ? $request->get_param( 'amount' ) : -1;
+        $status = $request->get_param( 'status' ) ? $request->get_param( 'status' ) : 'publish';
+        
+        $courses = parent::get_modules( 'tutorial', $amount, $status, false );
 
         if ( !empty( $courses['error'] ) ) {
             Rest_Api::send_error_response( $courses['error'] );

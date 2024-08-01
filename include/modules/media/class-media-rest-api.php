@@ -314,6 +314,8 @@ class Media_Rest_Api {
             'post_title' => $title,
         ] );
 
+        update_post_meta($media_id, 'title', $title);
+
         if ( ! $post ) {
             return Rest_Api::send_error_response( 'media_update_failed' );
         }

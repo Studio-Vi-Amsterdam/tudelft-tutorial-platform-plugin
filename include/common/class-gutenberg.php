@@ -27,6 +27,7 @@ class Gutenberg {
         'tu-delft-video-text',
         'tu-delft-text-video',
         'tu-delft-h5p',
+        'tu-delft-quiz',
     ];
 
     public function __construct() {
@@ -136,7 +137,7 @@ class Gutenberg {
                  * 
                  * TODO: refactor this
                  */
-                if ( strpos($key, '_row_') ) {
+                if ( strpos($key, '_row_') !== false ) {
                     $key = str_replace('content_card_row_', $block['block_name'] . '_content_card_row_', $key);
                     $key = str_replace('card_link', $block['block_name'] . '_card_link', $key);
                     $key = str_replace('card_title', $block['block_name'] . '_card_title', $key);
@@ -144,9 +145,9 @@ class Gutenberg {
                     $key = str_replace('card_custom_link', $block['block_name'] . '_card_custom_link', $key);
                     $data[$key] = $value;
                 }
-                else if ( strpos($key, '_answers_') ) {
-                    $key = str_replace('answers_', $block['block_name'] . '_answers_', $key);
+                else if ( strpos($key, 'answers_') !== false ) {
                     $key = str_replace('answer', $block['block_name'] . '_answer', $key);
+                    $key = str_replace('is_correct', $block['block_name'] . '_is_correct', $key);
                     $data[$key] = $value;
                 }
                 else {

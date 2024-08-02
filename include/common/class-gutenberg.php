@@ -241,7 +241,7 @@ class Gutenberg {
                  * Note: Data is stored in database as ID but on frontend we need to show URL
                  */
                 if ( is_int($value) ) {
-                    if ( in_array($new_key, ['image', 'video', 'file']) ) {
+                    if ( in_array($new_key, ['image', 'video', 'file', 'thumbnail']) ) {
                         $block_data[$new_key . '_url'] = wp_get_attachment_url($value);
                     }
                     else if (strpos($new_key, 'link') !== false) {

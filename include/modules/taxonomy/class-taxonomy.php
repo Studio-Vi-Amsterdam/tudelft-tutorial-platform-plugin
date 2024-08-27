@@ -134,7 +134,7 @@ class Taxonomy {
      * 
      * @return mixed
      */
-    public static function get_categories( $hide_empty = false, $minimal = false ): mixed {
+    public static function get_categories( $hide_empty = false, $minimal = false, $children_only = false ): mixed {
 
         $args = [
             'taxonomy' => 'category',
@@ -143,7 +143,17 @@ class Taxonomy {
             'order' => 'DESC',
         ];
 
+        if ( !$children_only ) {
+            $args['parent'] = 0;
+        }
+
         $categories = get_terms( $args );
+
+        if ( $children_only ) {
+            $categories = array_filter( $categories, function( $category ) {
+                return $category->parent !== 0;
+            } );
+        }
 
         // filter out uncategorized
         $categories = array_filter( $categories, function( $category ) {
@@ -185,10 +195,10 @@ class Taxonomy {
             'exclude' => '1',
         ] );
 
+        $response = [];
+
         // If children_only is true then return only children
         if ( $children_only ) {
-
-            $response = [];
 
             foreach ( $academic_levels as $academic_level ) {
                 if ( $academic_level->parent !== 0 ) {
@@ -198,11 +208,18 @@ class Taxonomy {
                     ];
                 }
             }
+        } else {
+            foreach ( $academic_levels as $key => $academic_level ) {
+                if ( $academic_level->parent === 0 ) {
+                        $response[] = [
+                            'id' => $academic_level->term_id,
+                            'title' => $academic_level->name,
+                        ];
+                }
+            }
+        }        
 
-            return $response;
-        }
-
-        return $academic_levels;
+        return $response;
     }
     
 }

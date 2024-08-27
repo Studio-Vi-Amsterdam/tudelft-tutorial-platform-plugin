@@ -304,10 +304,12 @@ class Subject_Rest_Api extends Abstracts\Rest_Api {
          */ 
 
         $categories = Taxonomy::get_categories( false, true );
+        $secondary_categories = Taxonomy::get_categories( false, true, true );
         $keywords = Taxonomy::get_keywords(false, true);
 
         return [
             'categories' => $categories,
+            'secondary_categories' => $secondary_categories,
             'keywords' => $keywords,
         ];
     }

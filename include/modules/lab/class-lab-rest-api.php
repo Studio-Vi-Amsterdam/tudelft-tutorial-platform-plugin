@@ -312,7 +312,8 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
          * faculty,
          */
 
-        $study = Taxonomy::get_academic_levels( false, true );
+        $study = Taxonomy::get_academic_levels( false, false );
+        $seconday_study = Taxonomy::get_academic_levels( false, true );
         $keywords = Taxonomy::get_keywords( false, true );
         $teachers = Taxonomy::get_teachers( false, true );
         $faculty = [
@@ -321,6 +322,7 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
 
         return [
             'study' => $study,
+            'seconday_study' => $seconday_study,
             'keywords' => $keywords,
             'teachers' => $teachers,
             'faculty' => $faculty,

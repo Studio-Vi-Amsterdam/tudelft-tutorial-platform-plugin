@@ -797,7 +797,7 @@ class Rest_Api {
 
         // Custom fields mapping
         foreach ( $fields as $acf_field => $api_field ) {
-            if ( !empty( $data[ $api_field ] ) ) {
+            if ( isset( $data[ $api_field ] ) ) {
                 update_field( $acf_field, $data[ $api_field ], $id );
             }
         }

@@ -343,8 +343,8 @@ class Course_Rest_Api extends Abstracts\Rest_Api {
          * faculty,
          */
 
-        $study = Taxonomy::get_academic_levels( false, true );
-        $secondary_study = Taxonomy::get_academic_levels( false, false );
+        $study = Taxonomy::get_academic_levels( false, false );
+        $secondary_study = Taxonomy::get_academic_levels( false, true );
         $keywords = Taxonomy::get_keywords( false, true );
         $teachers = Taxonomy::get_teachers( false, true );
         $faculty = [

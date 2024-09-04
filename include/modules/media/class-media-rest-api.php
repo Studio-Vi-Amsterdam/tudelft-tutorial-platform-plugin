@@ -173,7 +173,7 @@ class Media_Rest_Api {
 
         $file_title = $file['name'];
 
-        $ssk_id = SurfShareKit::upload_media( $file, $file_title );
+        // $ssk_id = SurfShareKit::upload_media( $file, $file_title );
 
         require_once(ABSPATH . 'wp-admin/includes/file.php');
         require_once(ABSPATH . 'wp-admin/includes/image.php');
@@ -200,7 +200,8 @@ class Media_Rest_Api {
             $attach_data = wp_generate_attachment_metadata($attach_id, $filename);
             wp_update_attachment_metadata($attach_id, $attach_data);
 
-            update_post_meta($attach_id, 'surfsharekit_id', $ssk_id );
+            // update_post_meta($attach_id, 'surfsharekit_id', $ssk_id );
+            update_post_meta($attach_id, 'surfsharekit_id', '' );
             update_post_meta($attach_id, '_wp_attachment_image_alt', $title );
             update_post_meta($attach_id, 'title', $title);
 

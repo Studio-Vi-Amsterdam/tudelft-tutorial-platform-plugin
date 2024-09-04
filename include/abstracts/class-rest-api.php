@@ -332,11 +332,12 @@ class Rest_Api {
             ];
         }
 
-        $repo_data = SurfShareKit::generate_repo_item($ssk_media, $title, [
-            wp_get_current_user()->user_login,
-        ]);
+        // $repo_data = SurfShareKit::generate_repo_item($ssk_media, $title, [
+        //     wp_get_current_user()->user_login,
+        // ]);
 
-        update_post_meta( $post_id, 'surfsharekit_id', $repo_data->id );
+        // update_post_meta( $post_id, 'surfsharekit_id', $repo_data->id );
+        update_post_meta( $post_id, 'surfsharekit_id', '' );
 
         return $post_id;
     }

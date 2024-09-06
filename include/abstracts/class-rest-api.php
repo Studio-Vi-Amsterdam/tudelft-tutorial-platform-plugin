@@ -314,11 +314,29 @@ class Rest_Api {
             }
         }
 
+        // TODO: This is a temporary solution
+        $academic_levels = [];
+        $categories = [];
+
         // Custom fields mapping
         foreach ( $fields as $acf_field => $api_field ) {
-            if ( !empty( $data[ $api_field ] ) ) {
+            if ( isset( $data[ $api_field ] ) ) {
                 update_field( $acf_field, $data[ $api_field ], $post_id );
             }
+            if ( $api_field === 'subject' || $api_field === 'primary_subject' || $api_field === 'secondary_subject' || $api_field === 'category' || $api_field === 'secondary_category' ) {
+                $categories[] = $data[ $api_field ];
+            }
+            if ( $api_field === 'study' || $api_field === 'primary_study' || $api_field === 'secondary_study' ) {
+                $academic_levels[] = $data[ $api_field ];
+            }
+        }
+
+        if ( !empty( $academic_levels ) ) {
+            wp_set_post_terms( $post_id, $academic_levels, 'academic-level', false );
+        }
+
+        if ( !empty( $categories ) ) {
+            wp_set_post_terms( $post_id, $categories, 'category', false );
         }
 
         // Create SSK Media
@@ -536,11 +554,29 @@ class Rest_Api {
             }
         }
 
+        // TODO: This is a temporary solution
+        $academic_levels = [];
+        $categories = [];
+
         // Custom fields mapping
         foreach ( $fields as $acf_field => $api_field ) {
-            if ( !empty( $data[ $api_field ] ) ) {
+            if ( isset( $data[ $api_field ] ) ) {
                 update_field( $acf_field, $data[ $api_field ], $post_id );
             }
+            if ( $api_field === 'subject' || $api_field === 'primary_subject' || $api_field === 'secondary_subject' || $api_field === 'category' || $api_field === 'secondary_category' ) {
+                $categories[] = $data[ $api_field ];
+            }
+            if ( $api_field === 'study' || $api_field === 'primary_study' || $api_field === 'secondary_study' ) {
+                $academic_levels[] = $data[ $api_field ];
+            }
+        }
+
+        if ( !empty( $academic_levels ) ) {
+            wp_set_post_terms( $post_id, $academic_levels, 'academic-level', false );
+        }
+
+        if ( !empty( $categories ) ) {
+            wp_set_post_terms( $post_id, $categories, 'category', false );
         }
 
         // get
@@ -796,11 +832,29 @@ class Rest_Api {
             }
         }
 
+        // TODO: This is a temporary solution
+        $academic_levels = [];
+        $categories = [];
+
         // Custom fields mapping
         foreach ( $fields as $acf_field => $api_field ) {
             if ( isset( $data[ $api_field ] ) ) {
                 update_field( $acf_field, $data[ $api_field ], $id );
             }
+            if ( $api_field === 'subject' || $api_field === 'primary_subject' || $api_field === 'secondary_subject' || $api_field === 'category' || $api_field === 'secondary_category' ) {
+                $categories[] = $data[ $api_field ];
+            }
+            if ( $api_field === 'study' || $api_field === 'primary_study' || $api_field === 'secondary_study' ) {
+                $academic_levels[] = $data[ $api_field ];
+            }
+        }
+
+        if ( !empty( $academic_levels ) ) {
+            wp_set_post_terms( $id, $academic_levels, 'academic-level', false );
+        }
+
+        if ( !empty( $categories ) ) {
+            wp_set_post_terms( $id, $categories, 'category', false );
         }
 
         return true;

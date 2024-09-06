@@ -237,9 +237,8 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
      * 
      * @param WP_REST_Request $request
      * 
-     * @return mixed
      */
-    public static function create_draft_tutorial( WP_REST_Request $request ): mixed {
+    public static function create_draft_tutorial( WP_REST_Request $request ) {
         
         $data = $request->get_json_params();
 
@@ -325,9 +324,8 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
      * 
      * @since 1.0.0
      * 
-     * @return mixed
      */
-    public static function get_tutorial_create_info(): mixed {
+    public static function get_tutorial_create_info() {
         
         /**
          * Required data for creating tutorial
@@ -341,7 +339,8 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
          */
 
         $softwares = Software::get_softwares();
-        $subjects = Subject::get_all_subjects();
+        $categories = Taxonomy::get_categories( false, false );
+        $secondary_categories = Taxonomy::get_categories( false, true, true );
         $courses = Course::get_all_courses();
         $faculties = [
             'Bouwkunde'
@@ -351,7 +350,8 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
 
         Rest_Api::send_success_response([
             'softwares' => $softwares,
-            'subjects' => $subjects,
+            'subjects' => $categories,
+            'secondary_subjects' => $secondary_categories,
             'courses' => $courses,
             'faculties' => $faculties,
             'keywords' => $keywords,

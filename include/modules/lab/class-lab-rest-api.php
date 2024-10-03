@@ -316,6 +316,7 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
         $seconday_study = Taxonomy::get_academic_levels( false, true );
         $keywords = Taxonomy::get_keywords( false, true );
         $teachers = Taxonomy::get_teachers( false, true );
+        $defined_terms = Taxonomy::get_defined_terms();
         $faculty = [
             'Bouwkunde'
         ];
@@ -326,6 +327,7 @@ class Lab_Rest_Api extends Abstracts\Rest_Api {
             'keywords' => $keywords,
             'teachers' => $teachers,
             'faculty' => $faculty,
+            'defined_terms' => $defined_terms
         ];
     }
 }

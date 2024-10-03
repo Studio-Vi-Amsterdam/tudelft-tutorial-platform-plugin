@@ -347,6 +347,7 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
         ];
         $keywords = Taxonomy::get_keywords(false, true);
         $teachers = Taxonomy::get_teachers(false, true);
+        $defined_terms = Taxonomy::get_defined_terms();
 
         Rest_Api::send_success_response([
             'softwares' => $softwares,
@@ -355,7 +356,8 @@ class Tutorial_Rest_Api extends Abstracts\Rest_Api {
             'courses' => $courses,
             'faculties' => $faculties,
             'keywords' => $keywords,
-            'teachers' => $teachers
+            'teachers' => $teachers,
+            'defined_terms' => $defined_terms
        ]);
     }
 }

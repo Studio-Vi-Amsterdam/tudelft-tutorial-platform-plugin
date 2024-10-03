@@ -304,10 +304,12 @@ class Software_Rest_Api extends Abstracts\Rest_Api {
 
         $keywords = Taxonomy::get_keywords( false, true );
         $software_versions = Taxonomy::get_software_versions( false, true );
+        $defined_terms = Taxonomy::get_defined_terms();
 
         return [
             'keywords' => $keywords,
             'software_versions' => $software_versions,
+            'defined_terms' => $defined_terms
         ];
     }
 }

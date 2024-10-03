@@ -221,5 +221,35 @@ class Taxonomy {
 
         return $response;
     }
+
+    /**
+     * Get all defined terms
+     * 
+     * 
+     * @since 1.0.0
+     * 
+     * @return mixed
+     */
+    public static function get_defined_terms(): mixed {
+
+        $defined_terms = get_terms( [
+            'taxonomy' => 'defined-terms',
+            'hide_empty' => false,
+            'orderby' => 'count',
+            'order' => 'DESC',
+        ] );
+
+        $response = [];
+
+        foreach ( $defined_terms as $defined_term ) {
+            $response[] = [
+                'id' => $defined_term->term_id,
+                'title' => $defined_term->name,
+                'description' => $defined_term->description,
+            ];
+        }
+
+        return $response;
+    }
     
 }

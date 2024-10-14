@@ -688,6 +688,13 @@ class Rest_Api {
             ] );
         }
 
+        if ( $module->post_title != $data['title'] ) {
+            wp_update_post( [
+                'ID' => $id,
+                'post_title' => $data['title'],
+            ] );
+        }
+
         // if ( $module->post_author != $current_user->ID ) {
         //     return [
         //         'error' => "no_permission",
